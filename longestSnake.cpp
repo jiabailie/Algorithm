@@ -33,7 +33,7 @@ void dfs(int x, int y, vector<int> current, bool visited[][MAX])
             dfs(x + dx[i], y + dy[i], current, visited);
 
             visited[x + dx[i]][y + dy[i]] = false;
-  		current.pop_back();
+  	    current.pop_back();
         }
     }
     if(!change && current.size() > 0)
