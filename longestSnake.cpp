@@ -29,6 +29,7 @@ void dfs(int x, int y, vector<int> current, bool visited[][MAX])
             change = 1;
             visited[x + dx[i]][y + dy[i]] = true;
             current.push_back(board[x + dx[i]][y + dy[i]]);
+            
             dfs(x + dx[i], y + dy[i], current, visited);
 
             visited[x + dx[i]][y + dy[i]] = false;
