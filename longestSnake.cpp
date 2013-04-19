@@ -7,7 +7,7 @@ Example-->
 
 The given array elements are as follows: 
 
-4    7	9	8 
+4    	7	9	8 
 5	6	5	4 
 6	7	8	5 
 10	9	7	6 
