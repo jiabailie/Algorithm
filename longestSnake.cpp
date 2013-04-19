@@ -7,7 +7,7 @@ Example-->
 
 The given array elements are as follows: 
 
-4    	7	9	8 
+4	7	9	8 
 5	6	5	4 
 6	7	8	5 
 10	9	7	6 
@@ -108,19 +108,21 @@ int find()
     {
         for(j = 0; j < n; j++)
         {
+	    /* if the position doesn't exist in the current longest snakes, it will be check now */
+            /* if the position exist int the current longest snakes, which means it has been visited and checked, just ignore it */
             if(!checkpath(i, j))
             {
                 current.clear();
-				px.clear();
-				py.clear();
-				memset(visited, 0, sizeof(visited));
+		px.clear();
+		py.clear();
+		memset(visited, 0, sizeof(visited));
 
-				visited[i][j] = true;
+		visited[i][j] = true;
 
-				current.push_back(board[i][j]);
-				px.push_back(i);
-				py.push_back(j);
-				dfs(i, j, current, px, py, visited);
+		current.push_back(board[i][j]);
+		px.push_back(i);
+		py.push_back(j);
+		dfs(i, j, current, px, py, visited);
             }
         }
     }
