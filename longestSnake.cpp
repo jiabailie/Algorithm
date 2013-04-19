@@ -109,7 +109,8 @@ int find()
         for(j = 0; j < n; j++)
         {
 	    /* if the position doesn't exist in the current longest snakes, it will be check now */
-            /* if the position exist int the current longest snakes, which means it has been visited and checked, just ignore it */
+            /* if the position exist int the current longest snakes, which means it has been visited and checked, 
+               just ignore it */
             if(!checkpath(i, j))
             {
                 current.clear();
