@@ -7,7 +7,7 @@
 #include <vector>
 #include <cstdlib>
 #include <cstring>
-#define MAX 1000
+#define MAX 10000
 
 using namespace std;
 
@@ -53,8 +53,11 @@ int main()
     int i = 0;
     int target = 0;
     int *data = (int*)malloc(sizeof(int) * MAX);
+    
     while(scanf("%d", &data[i++]) != EOF);
+    
     scanf("%d", &target);
     printf("%d\n", find(target, data));
+    
     return 0;
 }
