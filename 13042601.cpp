@@ -12,7 +12,7 @@ inline int imax(int a, int b) { return a > b ? a : b; }
 /* Longest common substring */
 int lcs(int& p, string a, string b)
 {
-  int i = 0, j = 0;
+	int i = 0, j = 0;
 	int max = -1;
 	memset(dp, 0, sizeof(dp));
 	for(i = 1; i <= a.length(); i++)
