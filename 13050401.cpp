@@ -68,8 +68,8 @@ int main()
     int ms = 0, me = 0;
     int ts = 0, te = 0;
     int a[m][n] = { {4, 10, 15, 24, 26}, {0, 9, 12, 20, 35}, {5, 18, 22, 30, 50} };
-    int cur[m] = {1, 1, 1}; /* record the current positions of each array which haven't been used */
-    pn heap[m] = {pn(0, a[0][0]), pn(1, a[1][0]), pn(2, a[2][0])};
+    int cur[m] = { 1, 1, 1 }; /* record the current positions of each array which haven't been used */
+    pn heap[m] = { pn(0, a[0][0]), pn(1, a[1][0]), pn(2, a[2][0]) };
 
     heapsort(m, heap);
     ms = heap[0].d;
