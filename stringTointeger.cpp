@@ -15,7 +15,7 @@ int strToint(char* str)
     /* whether the str is null or the length of the string is 0 */
     if(str == NULL || len == 0)
     {
-        cout << "the string is null" << endl;
+        cout << "the string is null." << endl;
         return 0;
     }
     /* judge if the string has sign */
@@ -34,7 +34,7 @@ int strToint(char* str)
             /* when a > 0 and b > 0, but a + b < 0, overflow happened */
             if(p1 + p2 > INT_MAX)
             {
-                cout << "the number exceeds the limitation" << endl;
+                cout << "the number exceeds the limitation." << endl;
                 return 0;
             }
             ret = p1 + p2;
