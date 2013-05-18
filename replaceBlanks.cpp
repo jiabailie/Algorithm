@@ -28,7 +28,7 @@ void replaceBlanks(int length, char str[])
     }
 
     int newlen = original + 2 * blanks;
-    /* if the new length is larger than str maximum length after replace all blanks with %20*/
+    /* if the new length is larger than str's maximum length after replace all blanks with %20*/
     if(newlen > length)
     {
         return;
