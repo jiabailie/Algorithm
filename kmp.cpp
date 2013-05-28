@@ -82,7 +82,7 @@ void simple(char pattern[], char source[], vector<int>& starts)
     int lp = strlen(pattern), ls = strlen(source);
 
     starts.clear();
-    for(i = 0; i < ls; i++)
+    for(i = 0; i <= ls - lp; i++)
     {
         for(j = 0; j < lp; j++)
         {
