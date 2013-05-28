@@ -4,7 +4,7 @@
   {2,2,2,3,4,5,5,6,6,8,9}
   search 6
   should return 7.
- */
+*/
 #include <cstdio>
 #include <iostream>
 using namespace std;
