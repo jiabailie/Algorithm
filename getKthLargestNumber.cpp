@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <iostream>
+
 using namespace std;
 
 inline void swap(int& a, int& b) { int t = a; a = b; b = t; }
@@ -12,12 +13,19 @@ inline void swap(int& a, int& b) { int t = a; a = b; b = t; }
 int getKthLargestNumber(int k, int start, int end, int d[])
 {
     /* if k is illegal of the array length is less than k */
-    if(k <= 0 || (end - start + 1 < k))
+    if(k <= 0 || k > end - start + 1 || start > end)
     {
         return -1;
     }
-    int i = start, j = start;
+
+    /* if k equals 1 and start equals end, return d[start] */
+    if(k == 1 && start == end)
+    {
+        return d[start];
+    }
+
     int x = d[start];
+    int i = start, j = start;
 
     for(i = start + 1; i <= end; i++)
     {
@@ -30,10 +38,9 @@ int getKthLargestNumber(int k, int start, int end, int d[])
     swap(d[start], d[j]);
 
     int rank = j - start + 1;
-
     if(rank == k) { return d[j]; }
-    if(rank > k && j - 1 >= start) { return getKthLargestNumber(k, start, j - 1, d); }
-    if(rank < k && j + 1 <= end) { return getKthLargestNumber(k - rank, j + 1, end,  d); }
+    if(rank > k && start < j) { return getKthLargestNumber(k,        start, j - 1, d); }
+    if(rank < k && j < end)   { return getKthLargestNumber(k - rank, j + 1,   end, d); }
 
     return -1;
 }
