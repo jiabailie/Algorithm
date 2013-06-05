@@ -13,7 +13,7 @@ inline void swap(int& a, int& b) { int t = a; a = b; b = t; }
 int getKthLargestNumber(int k, int start, int end, int d[])
 {
     /* if k is illegal of the array length is less than k */
-    if(k <= 0 || k > end - start + 1 || start > end)
+    if(k <= 0 || k > end - start + 1)
     {
         return -1;
     }
