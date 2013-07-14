@@ -1,4 +1,4 @@
 Algorithm
 =========
 
-Some code segments and daily practices
+Literally, which is used to save some algorithm practices and useful code structures.
