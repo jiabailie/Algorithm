@@ -47,11 +47,16 @@ inline void generateRandomArray()
 }
 
 /* One step of this recursion. */
-inline bool oneStep(int cur, int cnt, int countV, int curSum, vector<int>& result)
+inline bool oneStep(int cur, int cnt, int countV, int curSum, vector<int> result)
 {
 	/* If countV items have been put into the pool, and the water sugar ratio is 1:1.  */
 	if(cnt == countV && curSum == (countV * V) / 2)
 	{
+		for(vector<int>::iterator it = result.begin(); it != result.end(); it++)
+		{
+			cout << (*it) << " ";
+		}
+		cout << endl;
 		return true;
 	}
 	/* If the search has to the end of the array and the water sugar ratio is not 1:1. */
@@ -60,7 +65,7 @@ inline bool oneStep(int cur, int cnt, int countV, int curSum, vector<int>& resul
 		return false;
 	}
 	bool ret = false;
-	for(int i = cur + 1; i < n && !ret; i++)
+	for(int i = cur + 1; i < n; i++)
 	{
 		result.push_back(C[i]);
 		ret |= oneStep(i + 1, cnt + 1, countV, curSum + C[i], result);
@@ -73,10 +78,10 @@ inline bool oneStep(int cur, int cnt, int countV, int curSum, vector<int>& resul
 }
 
 /* The main branch to deal with the process. */
-inline bool mixWater(int countV, vector<int>& result)
+inline bool mixWater(int countV, vector<int> result)
 {
 	bool ret = false;
-	for(int i = 0; i < n && !ret; i++)
+	for(int i = 0; i < n; i++)
 	{
 		result.clear();
 		result.push_back(C[i]);
@@ -93,22 +98,13 @@ int main()
 	generateRandomArray();
 	sort(C.begin(), C.end());
 
-	for(int i = 1; i <= n && !success; i++)
+	for(int i = 1; i < n; i++)
 	{
 		result.clear();
 		if(((i * V) & 1) == 0)
 		{
 			success = mixWater(i, result);
 		}
-	}
-
-	if(success)
-	{
-		for(vector<int>::iterator it = result.begin(); it != result.end(); it++)
-		{
-			cout << (*it) << " ";
-		}
-		cout << endl;
 	}
 
 	return 0;
