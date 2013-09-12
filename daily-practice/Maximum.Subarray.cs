@@ -12,7 +12,8 @@ namespace lab.Algorithm
         {
             return x > y ? x : y;
         }
-
+        
+        /* Dynamic programming from left to right. */
         public int findMaxSum1(int n, int[] d)
         {
             int end = d[0];
@@ -24,7 +25,8 @@ namespace lab.Algorithm
             }
             return all;
         }
-
+        
+        /* Dynamic programming from right to left. */
         public int findMaxSum2(int n, int[] d)
         {
             int start = d[n - 1];
@@ -36,7 +38,8 @@ namespace lab.Algorithm
             }
             return all;
         }
-
+        
+        /* Kadane's algorithm */
         public int findMaxSum3(int n, int[] d)
         {
             int ret = int.MinValue;
@@ -49,7 +52,8 @@ namespace lab.Algorithm
             }
             return ret;
         }
-
+        
+        /* General O(n^2) method. */
         public int findMaxSum4(int n, int[] d)
         {
             int i = 0, j = 0;
@@ -65,7 +69,8 @@ namespace lab.Algorithm
             }
             return ret;
         }
-
+        
+        /* Test if they have the same results. */
         public findMaxSum()
         {
             int cnt = 0;
