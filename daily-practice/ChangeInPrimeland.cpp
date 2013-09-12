@@ -25,7 +25,7 @@ Input:
 Output:
 7
 1
- */
+*/
 #include <cstdio>
 using namespace std;
 
