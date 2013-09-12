@@ -14,8 +14,8 @@ Output
 For each of the T testcases output one number per line the maximum amount which sherry can't afford to give change for.
 
 Constraints
-1 ¡Ü T ¡Ü 100
-2 ¡Ü c,d ¡Ü 10^6
+1 <= T <= 100
+2 <= c,d <= 10^6
 
 Example
 Input:
