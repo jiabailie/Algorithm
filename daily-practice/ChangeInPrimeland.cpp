@@ -26,18 +26,18 @@ Output:
 7
 1
  */
- #include <cstdio>
- using namespace std;
+#include <cstdio>
+using namespace std;
 
- int main()
- {
-     int T = 0;
-     long long c = 0, d = 0;
-     scanf("%d", &T);
-     for(int i = 0; i < T; i++)
-     {
-         scanf("%lld %lld", &c, &d);
-         printf("%lld\n", c * d - c - d);
-     }
-     return 0;
- }
+int main()
+{
+    int T = 0;
+    long long c = 0, d = 0;
+    scanf("%d", &T);
+    for(int i = 0; i < T; i++)
+    {
+        scanf("%lld %lld", &c, &d);
+        printf("%lld\n", c * d - c - d);
+    }
+    return 0;
+}
