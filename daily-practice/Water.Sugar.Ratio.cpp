@@ -9,6 +9,7 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 const int r = 5;
@@ -88,7 +89,7 @@ int main()
 {
 	bool success = false;
 	vector<int> result;
-	scanf("%d", &V);
+	cin >> V;
 	generateRandomArray();
 	sort(C.begin(), C.end());
 
@@ -99,6 +100,15 @@ int main()
 		{
 			success = mixWater(i, result);
 		}
+	}
+
+	if(success)
+	{
+		for(vector<int>::iterator it = result.begin(); it != result.end(); it++)
+		{
+			cout << (*it) << " ";
+		}
+		cout << endl;
 	}
 
 	return 0;
