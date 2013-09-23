@@ -1,45 +1,57 @@
-/* heap sort, use big heap */
 #include <cstdio>
+#include <iostream>
 #include <cstring>
 #include <vector>
+
 using namespace std;
 
-inline void swap(int& a, int& b) { int c = a; a = b; b = c; }
+const int len = 1000;
 
-/* big heap */
-void buildheap(int n, int a[])
+template<class T>
+inline void iswap(T& a, T& b) { T c = a; a = b; b = c; }
+
+/* Build big heap. */
+inline void buildHeap(int n, vector<int>& heap)
 {
-    int i = 0;
-    int max = 0, l = 0, r = 0;
-    for(i = n / 2; i >= 0; i--)
-    {
-        max = i;
-        l = 2 * i + 1;
-        r = 2 * i + 2;
-        if(l < n && a[l] > a[max]) { max = l; }
-        if(r < n && a[r] > a[max]) { max = r; }
-        if(max != i) { swap(a[max], a[i]); }
-    }
+	for(int i = n >> 1; i >= 0; i--)
+	{
+		int l = 2 * i + 1;
+		int r = 2 * i + 2;
+		int max = i;
+		if(l <= n && heap[l] > heap[max]) { max = l; }
+		if(r <= n && heap[r] > heap[max]) { max = r; }
+		if(max != i) { iswap(heap[i], heap[max]);}
+	}
 }
-void heapsort(int n, int a[])
-{
-    int i = 0;
-    buildheap(n, a);
 
-    for(i = n - 1; i > 0; i--)
-    {
-        swap(a[0], a[i]);
-        buildheap(i, a);
-    }
+inline void heapSort(vector<int>& heap)
+{
+	for(int i = len - 1; i > 0; i--)
+	{
+		buildHeap(i, heap);
+		iswap(heap[0], heap[i]);
+	}
+}
+
+inline void displayHeap(vector<int>& heap)
+{
+	for(vector<int>::iterator it = heap.begin(); it != heap.end(); it++)
+	{
+		cout << (*it) << " " << endl;
+	}
 }
 
 int main()
 {
-    int a[10] = {15, 2, 3, 91, 8, 4, 5, 6, 65, 7 };
+	vector<int> heap;
+	for(int i = 0; i < len; i++)
+	{
+		heap.push_back(rand() % len);
+	}
 
-    heapsort(10, a);
+	heapSort(heap);
 
-    for(int i = 0; i < 10; i++){ cout << a[i] << " "; }
+	displayHeap(heap);
 
-    return 0;
+	return 0;
 }
