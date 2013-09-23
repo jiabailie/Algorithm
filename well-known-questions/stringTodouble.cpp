@@ -10,6 +10,7 @@ const int LEN = 100;
 
 inline double iatof(char ary[])
 {
+	/* If the array is null or the length of array is 0. */
 	if(!ary || strlen(ary) == 0)
 	{
 		return INT_MIN;
@@ -22,12 +23,14 @@ inline double iatof(char ary[])
 	double part1 = 0.0;
 	double part2 = 0.0;
 
+	/* Get the sign. */
 	if(ary[0] == '-' || ary[0] == '+')
 	{
 		sign = ary[0] == '-' ? -1 : 1;
 		i++;
 	}
 
+	/* Get the integer part. */
 	for(; i < len; i++)
 	{
 		if(ary[i] == '.')
@@ -42,6 +45,7 @@ inline double iatof(char ary[])
 		}
 		part1 = part1 * 10 + int(ary[i] - '0');
 	}
+	/* Get the part which is less than 1. */
 	if(dot == 1)
 	{
 		for(j = len - 1; j > i; j--)
