@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <vector>
 #include <climits>
+#include <iomanip>
 
 using namespace std;
 
@@ -70,9 +71,9 @@ int main()
 
 	double x = atof(ary);
 
-	cout << x << endl;
+	cout << setprecision(10) << x << endl;
 
-	cout << iatof(ary) << endl;
+	cout << setprecision(10) << iatof(ary) << endl;
 
 	return 0;
 }
