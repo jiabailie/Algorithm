@@ -1,4 +1,4 @@
-/* Using Babylonian Method to computing square roots. */
+/* Using Babylonian Method and Binary Search to computing square roots. */
 #include <cstdio>
 #include <cstring>
 #include <vector>
@@ -8,7 +8,7 @@
 #include <cmath>
 #include <iostream>
 
-const double delta = 0.000000001;
+const double delta = 1e-16;
 
 const int TIMES = 1000;
 
@@ -77,6 +77,11 @@ inline double RoughEstimation(double value)
 /* Do iteration TIMES times, to get the value. */
 inline double BabylonianMethod(double source)
 {
+	if(source <= 0)
+	{
+		cout << "The input number is not positive number." << endl;
+		return INT_MIN;
+	}
 	double rough = RoughEstimation(source);
 	double pre = rough;
 	for(int i = 0; i < TIMES; i++)
@@ -91,15 +96,47 @@ inline double BabylonianMethod(double source)
 	return rough;
 }
 
+/* Using binary search to find the sqrt root. */
+inline double BinarySearchSquareRoot(double source)
+{
+	if(source <= 0)
+	{
+		cout << "The input number is not positive number." << endl;
+		return INT_MIN;
+	}
+	double start = 0;
+	double end = source;
+	double mid = source * 0.5;
+
+	for(int i = 0; i < TIMES; i++)
+	{
+		double tmp = mid * mid;
+		double pre = mid;
+		if(tmp > source)
+		{
+			end = mid;
+		}
+		if(tmp < source)
+		{
+			start = mid;
+		}
+		mid = start + (end - start) * 0.5;
+		if(iABS(pre - mid) < delta)
+		{
+			break;
+		}
+	}
+	return mid;
+}
+
 int main()
 {
 	for(int i = 0; i < 100; i++)
 	{
 		double source = rand() % 1000;
 		double root1 = BabylonianMethod(source);
-		double root2 = sqrt(source);
-
-		cout << iABS(root1 - root2) << endl;
+		double root2 = BinarySearchSquareRoot(source);
+		double root3 = sqrt(source);
 	}
 
 	return 0;
