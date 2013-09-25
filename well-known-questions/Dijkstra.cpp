@@ -1,5 +1,8 @@
 #include "Graph.h"
 
+/* Distance[] records the minimum distance from startNode. 
+ * Path[] records the pre-node in the path which is the shortest path from startNode to this node.
+ */
 inline void Dijkstra(int startNode, vector<int>& distance, vector<int>& path, Graph& g)
 {
 	int n = g.n;
@@ -14,6 +17,7 @@ inline void Dijkstra(int startNode, vector<int>& distance, vector<int>& path, Gr
 	path[startNode] = startNode;
 	cvisited++;
 
+	/* Initialize the distance and path. */
 	for(i = 0; i < n; i++)
 	{
 		if(i != startNode)
@@ -23,6 +27,7 @@ inline void Dijkstra(int startNode, vector<int>& distance, vector<int>& path, Gr
 		}
 	}
 
+	/* Visit all unvisited nodes, and find the nearest node to put into the visited set. */
 	while(cvisited < n)
 	{
 		int min = INT_MAX;
@@ -35,8 +40,11 @@ inline void Dijkstra(int startNode, vector<int>& distance, vector<int>& path, Gr
 				minC = i;
 			}
 		}
+
 		cvisited++;
 		visited[minC] = true;
+
+		/* Adjust the distance and pre-node along the path. */
 		for(i = 0; i < n; i++)
 		{
 			if(i != minC && g.weight[minC][i] != INT_MAX && g.weight[minC][i] + distance[minC] < distance[i])
@@ -52,9 +60,9 @@ int main()
 {
 	int e = 9;
 	const int n = 6;
-	
+
 	vector<vector<int> > weight;
-	
+
 	int matrix[n][n] = 
 	{{0,  7,  9,  0, 0, 14},
 	 {7,  0, 10, 15, 0,  0},
@@ -62,7 +70,7 @@ int main()
 	 {0, 15, 11,  0, 6,  0},
 	 {0,  0,  0,  6, 0,  9},
 	 {14, 0,  2,  0, 9,  0}};
-	 
+
 	for(int i = 0; i < n; i++)
 	{
 		vector<int> t;		
