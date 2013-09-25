@@ -50,9 +50,11 @@ inline void Dijkstra(int startNode, vector<int>& distance, vector<int>& path, Gr
 
 int main()
 {
-	const int n = 6;
 	int e = 9;
+	const int n = 6;
+	
 	vector<vector<int> > weight;
+	
 	int matrix[n][n] = 
 	{{0,  7,  9,  0, 0, 14},
 	 {7,  0, 10, 15, 0,  0},
@@ -60,6 +62,7 @@ int main()
 	 {0, 15, 11,  0, 6,  0},
 	 {0,  0,  0,  6, 0,  9},
 	 {14, 0,  2,  0, 9,  0}};
+	 
 	for(int i = 0; i < n; i++)
 	{
 		vector<int> t;		
