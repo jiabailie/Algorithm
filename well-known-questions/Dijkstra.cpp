@@ -1,3 +1,6 @@
+/* Dijkstra's algorithm 
+ * http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+ */
 #include "Graph.h"
 
 /* Distance[] records the minimum distance from startNode. 
