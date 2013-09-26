@@ -1,3 +1,6 @@
+/* Kruskal's algorithm
+ * http://en.wikipedia.org/wiki/Kruskal%27s_algorithm
+ */
 #include "Graph.h"
 
 template<typename T>
