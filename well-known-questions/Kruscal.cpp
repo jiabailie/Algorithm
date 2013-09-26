@@ -1,5 +1,18 @@
 #include "Graph.h"
 
+template<typename T>
+inline void deleteArray(int len, T** source)
+{
+	if(!source) { return; }
+	for(int i = 0; i < len; i++)
+	{
+		if(source[i])
+		{
+			free(source[i]);
+		}
+	}
+}
+
 inline void Kruscal(const Graph& g, vector<Edge>& MST)
 {
 	int n = g.n;
@@ -74,6 +87,8 @@ inline void Kruscal(const Graph& g, vector<Edge>& MST)
 			break;
 		}
 	}
+
+	deleteArray(n, reachAble);
 }
 
 int main()
