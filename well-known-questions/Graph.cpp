@@ -1,5 +1,26 @@
 #include "Graph.h"
 
+Edge::Edge(const Edge& _edge)
+{
+	partCopy(*this, _edge);
+}
+
+Edge& Edge::operator=(const Edge& _edge)
+{
+	if(&_edge != this)
+	{
+		partCopy(*this, _edge);
+	}
+	return *this;
+}
+
+void Edge::partCopy(Edge& edge, const Edge& _edge)
+{
+	edge.node1 = _edge.node1;
+	edge.node2 = _edge.node2;
+	edge.weight = _edge.weight;
+}
+
 Graph::Graph()
 {
 	int i = 0;
