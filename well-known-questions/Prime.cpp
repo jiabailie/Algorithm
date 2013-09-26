@@ -1,3 +1,6 @@
+/* Prim's algorithm
+ * http://en.wikipedia.org/wiki/Prim%27s_algorithm
+ */
 #include "Graph.h"
 
 template<typename T>
