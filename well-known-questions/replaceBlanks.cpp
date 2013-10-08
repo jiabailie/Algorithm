@@ -56,8 +56,6 @@ void replaceBlanks(int length, char str[])
 int main()
 {
     char str[MAX] = " str str sss ";
-    //char str[MAX] = " ";
-    //char str[MAX] = "";
     replaceBlanks(MAX, str);
 
     cout << str;
