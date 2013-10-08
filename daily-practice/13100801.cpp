@@ -1,5 +1,5 @@
 /* Implement an algorithm to print all possible valid combinations of braces when N pairs of paranthesis are given. 
- * Reference: http://www.careercup.com/question?id=5007980722388992
+ * Reference: www.careercup.com/question?id=5007980722388992
  */
 #include <cstdio>
 #include <iostream>
