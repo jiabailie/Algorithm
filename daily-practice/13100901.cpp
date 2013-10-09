@@ -110,7 +110,7 @@ int main()
 
 #ifdef DEBUG
 	int data[] = //{1,2,3,4,2,6};
-				{1,2,3,4,5,5,6,7,3,2,2,1,5};
+		     {1,2,3,4,5,5,6,7,3,2,2,1,5};
 	n = sizeof(data) / sizeof(int);
 	for each(int x in data)
 	{
