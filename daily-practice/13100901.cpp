@@ -62,8 +62,11 @@ void assignCandy(vector<int>& assignment, vector<int>& weight)
 	if(weightCompress[0] < weightCompress[1]) { weightCompress[0].wave = -1; }
 	for(i = 1; i < n - 1; i++)
 	{
-		if(weightCompress[i] > weightCompress[i - 1] && weightCompress[i] > weightCompress[i + 1]) { weightCompress[i].wave = 1; }
-		if(weightCompress[i] < weightCompress[i - 1] && weightCompress[i] < weightCompress[i + 1]) { weightCompress[i].wave = -1; }
+		if(weightCompress[i] > weightCompress[i - 1] && weightCompress[i] > weightCompress[i + 1]) 
+		{ weightCompress[i].wave = 1; }
+		
+		if(weightCompress[i] < weightCompress[i - 1] && weightCompress[i] < weightCompress[i + 1]) 
+		{ weightCompress[i].wave = -1; }
 	}
 	weightCompress[n - 1].wave = 1;
 	if(weightCompress[n - 1] < weightCompress[n - 2]) { weightCompress[n - 1].wave = -1; }
