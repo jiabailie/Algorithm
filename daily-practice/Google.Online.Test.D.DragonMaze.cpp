@@ -14,8 +14,8 @@
 using namespace std;
 
 const int len = 100;
-int pre[len][len];		// pre-node position in the shortest path
-int dist[len][len];		// the distance from start point
+int pre[len][len];	// pre-node position in the shortest path
+int dist[len][len];	// the distance from start point
 int value[len][len];	// the power till this point it gathered
 int board[len][len];
 int dirX[4] = { 1, 0, -1, 0 };
@@ -61,7 +61,7 @@ inline void judgeResult(int N, int M, int enx, int eny, int exx, int exy)
 				else if(pre[tx][ty] != -1)
 				{
 					if(dist[x][y] + 1 < dist[tx][ty] || 
-					(dist[x][y] + 1 == dist[tx][ty] && value[x][y] + board[tx][ty] > value[tx][ty]))
+					  (dist[x][y] + 1 == dist[tx][ty] && value[x][y] + board[tx][ty] > value[tx][ty]))
 					{
 						pre[tx][ty] = top;
 						dist[tx][ty] = dist[x][y] + 1;
