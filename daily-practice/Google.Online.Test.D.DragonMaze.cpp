@@ -1,7 +1,7 @@
 /* Google 2013 Online Test Round B
  * Source: https://code.google.com/codejam/contest/2929486/dashboard#s=p3
  */
- #include <iostream>
+#include <iostream>
 #include <fstream>
 #include <cmath>
 #include <cstring>
@@ -60,7 +60,8 @@ inline void judgeResult(int N, int M, int enx, int eny, int exx, int exy)
 				}
 				else if(pre[tx][ty] != -1)
 				{
-					if(dist[x][y] + 1 < dist[tx][ty] || (dist[x][y] + 1 == dist[tx][ty] && value[x][y] + board[tx][ty] > value[tx][ty]))
+					if(dist[x][y] + 1 < dist[tx][ty] || 
+					(dist[x][y] + 1 == dist[tx][ty] && value[x][y] + board[tx][ty] > value[tx][ty]))
 					{
 						pre[tx][ty] = top;
 						dist[tx][ty] = dist[x][y] + 1;
