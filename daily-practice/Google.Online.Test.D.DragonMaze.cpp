@@ -1,5 +1,5 @@
 /* Google 2013 Online Test Round B
- * Source: https://code.google.com/codejam/contest/2929486/dashboard#s=p3
+ * Source: code.google.com/codejam/contest/2929486/dashboard
  */
 #include <iostream>
 #include <fstream>
@@ -51,17 +51,17 @@ inline void judgeResult(int N, int M, int enx, int eny, int exx, int exy)
 			tmp = project(tx, ty);
 			if(tx >= 0 && tx < N && ty >= 0 && ty < M && tmp != pre[x][y] && board[tx][ty] != -1) // position valid
 			{
-				if(pre[tx][ty] == -1)
+				if(pre[tx][ty] == -1) // if it has not been visited.
 				{
 					pre[tx][ty] = top;
 					dist[tx][ty] = dist[x][y] + 1;
 					value[tx][ty] = value[x][y] + board[tx][ty];
 					iqueue.push(tmp);
 				}
-				else if(pre[tx][ty] != -1)
+				else if(pre[tx][ty] != -1) // if it has been visited
 				{
-					if(dist[x][y] + 1 < dist[tx][ty] || 
-					  (dist[x][y] + 1 == dist[tx][ty] && value[x][y] + board[tx][ty] > value[tx][ty]))
+					// if (x,y) has shorter distance from (enx, eny) as its previous node, or it has more power can be gathered.
+					if(dist[x][y] + 1 < dist[tx][ty] || (dist[x][y] + 1 == dist[tx][ty] && value[x][y] + board[tx][ty] > value[tx][ty]))
 					{
 						pre[tx][ty] = top;
 						dist[tx][ty] = dist[x][y] + 1;
