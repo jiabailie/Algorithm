@@ -1,5 +1,6 @@
 /* Google 2013 Online Test Round B
  * Source: code.google.com/codejam/contest/2929486/dashboard
+ * Idea: DP + BFS
  */
 #include <iostream>
 #include <fstream>
