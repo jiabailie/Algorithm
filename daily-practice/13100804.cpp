@@ -1,4 +1,4 @@
-/* Using stack and queue to realize dfs and wfs. 
+/* Using stack and queue to realize dfs and bfs. 
  */
 #include <cstdio>
 #include <iostream>
@@ -50,7 +50,7 @@ void dfs(int start, int graph[n][n])
 	}
 }
 
-void wfs(int start, int graph[n][n])
+void bfs(int start, int graph[n][n])
 {
 	int i = 0;
 	int cvisit = 0;
@@ -103,7 +103,7 @@ int main()
 
 	dfs(0, graph);
 	cout << endl;
-	wfs(0, graph);
+	bfs(0, graph);
 	cout << endl;
 
 	return 0;
