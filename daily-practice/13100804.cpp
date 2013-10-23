@@ -1,11 +1,11 @@
-/* Using stack and queue to realize dfs and bfs. 
- */
+/* Using stack and queue to realize dfs and bfs. */
 #include <cstdio>
+#include <set>
 #include <iostream>
 #include <stack>
 #include <queue>
 #include <vector>
-#include<cstring>
+#include <cstring>
 
 using namespace std;
 
@@ -14,38 +14,39 @@ const int n = 7;
 void dfs(int start, int graph[n][n])
 {
 	int i = 0;
-	int cvisit = 0;
+	set<int> iset;
 	stack<int> istack;
-	vector<bool> visit(n, false);
+	vector<int> tmp;
+
 	istack.push(start);
 
-	while(!istack.empty() && cvisit < n)
+	for(i = 0; i < n; i++) { iset.insert(i); }
+
+	while(!istack.empty())
 	{
 		int top = istack.top();
 		istack.pop();
-		cvisit++;
+		iset.erase(top);
 
-		visit[top] = true;
 		cout << top << " ";
 
-		for(i = 0; i < n; i++)
+		tmp.clear();
+		for(set<int>::iterator it = iset.begin(); it != iset.end(); it++)
+        {
+            if(graph[top][(*it)])
+            {
+                tmp.push_back(*it);
+            }
+        }
+        for(vector<int>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        {
+            istack.push(*it);
+            iset.erase(*it);
+        }
+
+		if(istack.empty() && !iset.empty()) // if there are more than one connected-components.
 		{
-			if(graph[top][i] && !visit[i])
-			{
-				istack.push(i);
-				break;
-			}
-		}
-		if(istack.empty() && cvisit < n) // if there are more than one connected-components.
-		{
-			for(i = 0; i < n; i++)
-			{
-				if(!visit[i])
-				{
-					istack.push(i);
-					break;
-				}
-			}
+			istack.push(*(iset.begin()));
 		}
 	}
 }
@@ -53,37 +54,39 @@ void dfs(int start, int graph[n][n])
 void bfs(int start, int graph[n][n])
 {
 	int i = 0;
-	int cvisit = 0;
+	set<int> iset;
 	queue<int> iqueue;
-	vector<bool> visit(n, false);
+	vector<int> tmp;
+
 	iqueue.push(start);
-	
-	while(!iqueue.empty() && cvisit < n)
+
+	for(i = 0; i < n; i++) { iset.insert(i); }
+
+	while(!iqueue.empty())
 	{
 		int front = iqueue.front();
 		iqueue.pop();
-		cvisit++;
+		iset.erase(front);
 
-		visit[front] = true;
 		cout << front << " ";
-		for(i = 0; i < n; i++)
-		{
-			if(graph[front][i] && !visit[i])
-			{
-				iqueue.push(i);
-			}
-		}
 
-		if(iqueue.empty() && cvisit < n)
+		tmp.clear();
+		for(set<int>::iterator it = iset.begin(); it != iset.end(); it++)
+        {
+            if(graph[front][(*it)])
+            {
+                tmp.push_back(*it);
+            }
+        }
+        for(vector<int>::iterator it = tmp.begin(); it != tmp.end(); it++)
+        {
+            iqueue.push(*it);
+            iset.erase(*it);
+        }
+
+		if(iqueue.empty() && !iset.empty()) // if there are more than one connected-components.
 		{
-			for(i = 0; i < n; i++)
-			{
-				if(!visit[i])
-				{
-					iqueue.push(i);
-					break;
-				}
-			}
+			iqueue.push(*(iset.begin()));
 		}
 	}
 }
