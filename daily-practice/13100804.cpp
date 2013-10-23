@@ -32,17 +32,17 @@ void dfs(int start, int graph[n][n])
 
 		tmp.clear();
 		for(set<int>::iterator it = iset.begin(); it != iset.end(); it++)
-        {
-            if(graph[top][(*it)])
-            {
-                tmp.push_back(*it);
-            }
-        }
-        for(vector<int>::iterator it = tmp.begin(); it != tmp.end(); it++)
-        {
-            istack.push(*it);
-            iset.erase(*it);
-        }
+		{
+			if(graph[top][(*it)])
+			{
+				tmp.push_back(*it);
+			}
+		}
+		for(vector<int>::iterator it = tmp.begin(); it != tmp.end(); it++)
+		{
+			istack.push(*it);
+			iset.erase(*it);
+		}
 
 		if(istack.empty() && !iset.empty()) // if there are more than one connected-components.
 		{
@@ -72,17 +72,17 @@ void bfs(int start, int graph[n][n])
 
 		tmp.clear();
 		for(set<int>::iterator it = iset.begin(); it != iset.end(); it++)
-        {
-            if(graph[front][(*it)])
-            {
-                tmp.push_back(*it);
-            }
-        }
-        for(vector<int>::iterator it = tmp.begin(); it != tmp.end(); it++)
-        {
-            iqueue.push(*it);
-            iset.erase(*it);
-        }
+		{
+			if(graph[front][(*it)])
+			{
+				tmp.push_back(*it);
+			}
+		}
+		for(vector<int>::iterator it = tmp.begin(); it != tmp.end(); it++)
+		{
+			iqueue.push(*it);
+			iset.erase(*it);
+		}
 
 		if(iqueue.empty() && !iset.empty()) // if there are more than one connected-components.
 		{
