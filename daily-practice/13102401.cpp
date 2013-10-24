@@ -76,14 +76,14 @@ inline void postOrderTraverseBinaryTree(treeNode*& root)
         }
 }
 
-inline void displayBinaryTreeByLevel(const treeNode* root)
+inline void displayBinaryTreeByLevel(treeNode*& root)
 {
         if(!root) { cout << "The root is null." << endl; return; }
 
         int size = 0, i = 0;
         treeNode* front = 0;
         queue<treeNode*> iqueue;
-        iqueue.push(const_cast<treeNode*>(root));
+        iqueue.push(root);
 
         while(!iqueue.empty())
         {
