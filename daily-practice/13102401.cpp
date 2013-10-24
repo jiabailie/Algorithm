@@ -26,7 +26,6 @@ struct treeNode
 inline void createBinaryTree(treeNode*& root)
 {
 	int v = 0;
-
 	cin >> v;
 	if(v > -1)
 	{
