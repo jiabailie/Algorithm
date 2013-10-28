@@ -16,13 +16,13 @@ public:
         int key;
         T* value;
 
-        Single() {}
+        Single(void) {}
 
         Single(const int _key, const void* _value)
         {
                 key = _key;
                 value = (T*)_value;  // set the current pointer points at the address of _value
-                value = 0;           // free the original pointer
+                _value = 0;          // free the original pointer
         }
 
         Single(const Single& _single)
@@ -38,7 +38,7 @@ public:
                 return *this;
         }
 
-        ~Single()
+        ~Single(void)
         {
                 delete value;
         }
@@ -62,11 +62,11 @@ public:
 
         ~PriorityQueue(void) {};
 
-        bool empty() { return queue.empty(); }
+        bool empty(void) { return queue.empty(); }
 
-        unsigned int size() { return queue.size(); }
+        unsigned int size(void) { return queue.size(); }
 
-        Single<T>* pop()
+        Single<T>* pop(void)
         {
                 if(queue.empty())
                 {
@@ -92,7 +92,7 @@ public:
                 build();
         }
 
-        void build()
+        void build(void)
         {
                 int len = queue.size();
         
