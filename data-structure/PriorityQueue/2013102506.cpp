@@ -7,7 +7,7 @@ class node
 public:
 	int key;
 	int value;
-	node() : key(0), value(0) {}
+	node(void) : key(0), value(0) {}
 	node(const int _key, const int _value) { key = _key; value = _value; }
 };
 
