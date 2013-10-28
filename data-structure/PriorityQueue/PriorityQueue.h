@@ -22,7 +22,7 @@ public:
         {
                 key = _key;
                 value = (T*)_value;  // set the current pointer points at the address of _value
-				_value = 0;			 // free the original pointer
+		_value = 0;	     // free the original pointer
         }
 
         Single(const Single& _single)
