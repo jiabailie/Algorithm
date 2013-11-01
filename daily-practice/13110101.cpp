@@ -14,7 +14,7 @@ References: qandwhat.apps.runkite.com/i-failed-a-twitter-interview/
 
 using namespace std;
 
-int pool[] = {6, 1, 4, 6, 7, 5, 1, 6, 4};
+int pool[] = {2, 5, 1, 3, 1, 2, 1, 7, 7, 6};
 
 int solve()
 {
@@ -25,10 +25,10 @@ int solve()
 	int right = n - 1;
 
 	if(n < 3) { return 0; }
-	while(left + 1 <= right && pool[left] <= pool[left + 1]) { left++; }
-	while(right - 1 >= left && pool[right - 1] >= pool[right]) { right--; }
+	while(left + 1 < right && pool[left] <= pool[left + 1]) { left++; }
+	while(right - 1 > left && pool[right - 1] >= pool[right]) { right--; }
 
-	while(left < right)
+	while(left + 1 < right)
 	{
 		if(pool[left] <= pool[right])
 		{
