@@ -1,4 +1,4 @@
-/* References: apps.topcoder.com/wiki/display/tc/SRM+596*/
+/* References: apps.topcoder.com/wiki/display/tc/SRM+596 */
 using System;
 using System.Collections.Generic;
 using System.Text;
