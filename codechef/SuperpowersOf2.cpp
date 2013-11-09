@@ -1,6 +1,6 @@
 /*
  * References : www.codechef.com/NOV13/problems/SPOTWO/
- * Idea: Fermat's little theorem [en.wikipedia.org/wiki/Fermat%27s_little_theorem]
+ * Idea : Fermat's little theorem [http://en.wikipedia.org/wiki/Fermat%27s_little_theorem]
  */
 #include <cstdio>
 
