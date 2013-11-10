@@ -84,7 +84,7 @@ inline void Kruscal(const Graph& g, vector<Edge>& MST)
 				}
 			}
 		}
-		/* If the minimus spanning tree has had (n - 1) edges, stop the process. */
+		/* If the minimum spanning tree has had (n - 1) edges, stop the process. */
 		if(MST.size() == n - 1)
 		{
 			break;
