@@ -56,6 +56,8 @@ inline vector<ll> calc1(int n, vector<ll> input)
  // after[i] = after[i + 1] * input[i + 1]   
 inline vector<ll> calc2(int n, vector<ll> input)
 {
+    if(n == 1) { return input; }
+    
     int i = 0;
     vector<ll> result(n, 0);
     vector<ll> beforeI(n, 1);
