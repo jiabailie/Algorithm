@@ -69,6 +69,7 @@ inline vector<ll> calc2(int n, vector<ll> input)
     {
         afterI[i] = afterI[i + 1] * input[i + 1];
     }
+    
     for(i = 0; i < n; i++)
     {
         result[i] = beforeI[i] * afterI[i];
@@ -80,6 +81,7 @@ int main()
 {
 	int i = 0;
 	vector<ll> input;
+	
 	for(i = 1; i < 5; i++) { input.push_back(i); }
 
 	vector<ll> ret1 = calc1(4, input);
