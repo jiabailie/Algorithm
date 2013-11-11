@@ -12,71 +12,70 @@ using namespace std;
 
 inline vector<ll> calc1(int n, vector<ll> input)
 {
-    ll multi = 0; // input[0] * ... * input[n - 1]
-    int c0 = 0;   // the amount of 0
-    vector<ll> result;
-    
-    multi = 1;
-    for(vector<ll>::iterator it = input.begin(); it != input.end(); it++)
-    {
-        if(*it) // input[i] != 0
-        {
-            multi *= (*it);
-        }
-        else
-        {
-            c0 = c0 + 1;
-        }
-        result.push_back(0);
-    }
-    
-    if(c0 >= 2) 
-    { 
-        return result;
-    }
-    result.clear();  
-    for(vector<ll>::iterator it = input.begin(); it != input.end(); it++) // c0 <= 1
-    {
-        if(*it) // input[i] != 0
-        {
-            result.push_back(multi / (*it));
-        }
-        else   // input[i] == 0
-        {
-            result.push_back(multi);
-        } 
-    }
+	int i = 0;
+	ll multi = 0; // input[0] * ... * input[n - 1]
+	int c0 = 0;   // the amount of 0
+	vector<ll> result(n, 0);
+
+	multi = 1;
+	for(vector<ll>::iterator it = input.begin(); it != input.end(); it++)
+	{
+		if(*it) // input[i] != 0
+		{
+			multi *= (*it);
+		}
+		else
+		{
+			c0 = c0 + 1;
+		}
+	}
+
+	if(c0 >= 2) 
+	{ 
+		return result;
+	}
+
+	for(i = 0; i < n; i++)
+	{
+		if(input[i]) // input[i] != 0
+		{
+			result[i] = multi / input[i];
+		}
+		else        // input[i] == 0
+		{
+			result[i] = multi;
+		}
+	}
     
     return result;
 }
-     
-     
+
  // result[i] = (input[0] * input[1] * .. * input[i - 1]) * (input[i + 1] * input[i + 2] * ... * input[n - 1])
  // before[i] = before[i - 1] * input[i - 1]    
  // after[i] = after[i + 1] * input[i + 1]   
 inline vector<ll> calc2(int n, vector<ll> input)
 {
-    if(n == 1) { return input; }
-    
-    int i = 0;
-    vector<ll> result(n, 0);
-    vector<ll> beforeI(n, 1);
-    vector<ll> afterI(n, 1);
-    
-    for(i = 1; i < n; i++)
-    {
-        beforeI[i] = beforeI[i - 1] * input[i - 1];
-    }
-    for(i = n - 2; i >= 0; i--)
-    {
-        afterI[i] = afterI[i + 1] * input[i + 1];
-    }
-    
-    for(i = 0; i < n; i++)
-    {
-        result[i] = beforeI[i] * afterI[i];
-    }
-    return result;
+	if(n == 1) { return input; }
+
+	int i = 0;
+	vector<ll> result(n, 0);
+	vector<ll> beforeI(n, 1);
+	vector<ll> afterI(n, 1);
+
+	for(i = 1; i < n; i++)
+	{
+		beforeI[i] = beforeI[i - 1] * input[i - 1];
+	}
+	for(i = n - 2; i >= 0; i--)
+	{
+		afterI[i] = afterI[i + 1] * input[i + 1];
+	}
+
+	for(i = 0; i < n; i++)
+	{
+		result[i] = beforeI[i] * afterI[i];
+	}
+	return result;
 }   
 
 int main()
@@ -99,7 +98,7 @@ int main()
 	{
 		cout << ret2[i] << " ";
 	}
-	cout << endl;	
-	
+	cout << endl;        
+
 	return 0;
 }
