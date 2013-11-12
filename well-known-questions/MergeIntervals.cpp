@@ -14,6 +14,9 @@ inline int RIGHT(int n) { return (n + 1) << 1; }
 template<typename T>
 inline T imax(T a, T b) { return a > b ? a : b; }
 
+template<typename T>
+inline T imin(T a, T b) { return a < b ? a : b; }
+
 struct interval
 {
 	int start;
@@ -70,12 +73,13 @@ inline void hsort(vector<T>& heap)
 	}
 }
 
-inline void mergeInterval(vector<interval>& iset)
+inline vector<interval> mergeInterval(const vector<interval>& iset)
 {
 	int i = 0, n = iset.size();
 	int s = 0, e = 0;
 
-	if(n <= 1) { return; }
+	if(n == 0) { return vector<interval>(); }
+	if(n == 1) { return vector<interval>(iset.begin(), iset.end()); }
 
 	vector<interval> ret;
 
@@ -84,7 +88,7 @@ inline void mergeInterval(vector<interval>& iset)
 	
 	for(i = 1; i < n; i++)
 	{
-		if(iset[i].start>= s && iset[i].start <= e) // if current set has overlap with next interval
+		if(iset[i].start >= s && iset[i].start <= e) // if current set has overlap with next interval
 		{
 			e = imax(e, iset[i].end);
 		}
@@ -96,11 +100,40 @@ inline void mergeInterval(vector<interval>& iset)
 		}
 	}
 	ret.push_back(interval(s, e));
-	iset.clear();
-	for(vector<interval>::iterator it = ret.begin(); it != ret.end(); it++)
+	
+	return ret;
+}
+
+inline vector<interval> intersecInterval(const vector<interval>& iset)
+{
+	int i = 0, n = iset.size();
+	int s = 0, e = 0;
+
+	if(n == 0) { return vector<interval>(); }
+	if(n == 1) { return vector<interval>(iset.begin(), iset.end()); }
+
+	vector<interval> ret;
+
+	s = iset[0].start;
+	e = iset[0].end;
+
+	for(i = 1; i < n; i++)
 	{
-		iset.push_back(*it);
+		if(iset[i].start >= s && iset[i].start <= e)
+		{
+			s = imax(s, iset[i].start);
+			e = imin(e, iset[i].end);
+		}
+		else if(iset[i].start > e)
+		{
+			ret.push_back(interval(s, e));
+			s = iset[i].start;
+			e = iset[i].end;
+		}
 	}
+	ret.push_back(interval(s, e));
+
+	return vector<interval>();
 }
 
 int main()
@@ -116,6 +149,9 @@ int main()
 
 	hsort(iset);
 
-	mergeInterval(iset);
+	vector<interval> merge = mergeInterval(iset);
+
+	vector<interval> intersec = intersecInterval(iset);
+
 	return 0;
 }
