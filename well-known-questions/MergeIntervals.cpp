@@ -132,22 +132,22 @@ inline vector<interval> intersecInterval(const vector<interval>& iset)
 			s = iset[i].start;
 			e = iset[i].end;
 
-		    if(iset[i].start <= maxE)
-            {
-                if(iset[i].end <= maxE)
-                {
-                    ret.push_back(interval(iset[i].start, iset[i].end));
-                    s = iset[i].end;
-                    e = maxE;
-                }
-                else if(iset[i].end > maxE)
-                {
-                    ret.push_back(interval(iset[i].start, maxE));
-                    s = maxE;
-                    e = iset[i].end;
-                    maxE = iset[i].end;
-                }
-            }
+			if(iset[i].start <= maxE)
+			{
+				if(iset[i].end <= maxE)
+				{
+					ret.push_back(interval(iset[i].start, iset[i].end));
+					s = iset[i].end;
+					e = maxE;
+				}
+				else if(iset[i].end > maxE)
+				{
+					ret.push_back(interval(iset[i].start, maxE));
+					s = maxE;
+					e = iset[i].end;
+					maxE = iset[i].end;
+				}
+			}
 		}
 	}
 	ret.push_back(interval(s, e));
@@ -169,26 +169,26 @@ int main()
 	hsort(iset);
 
 	for(vector<interval>::iterator it = iset.begin(); it != iset.end(); it++)
-    {
-        cout << "[" << (*it).start << " " << (*it).end << "] ";
-    }
-    cout << endl;
+	{
+		cout << "[" << (*it).start << " " << (*it).end << "] ";
+	}
+	cout << endl;
 
 	vector<interval> merge = mergeInterval(iset);
 
 	for(vector<interval>::iterator it = merge.begin(); it != merge.end(); it++)
-    {
-        cout << "[" << (*it).start << " " << (*it).end << "] ";
-    }
-    cout << endl;
+	{
+		cout << "[" << (*it).start << " " << (*it).end << "] ";
+	}
+	cout << endl;
 
 	vector<interval> intersec = intersecInterval(iset);
 
 	for(vector<interval>::iterator it = intersec.begin(); it != intersec.end(); it++)
-    {
-        cout << "[" << (*it).start << " " << (*it).end << "] ";
-    }
-    cout << endl;
+	{
+		cout << "[" << (*it).start << " " << (*it).end << "] ";
+	}
+	cout << endl;
 
 	return 0;
 }
