@@ -57,6 +57,8 @@ inline void Dijkstra(int startNode, vector<int>& distance, vector<int>& path, Gr
 			}
 		}
 	}
+	
+	free(visited);
 }
 
 int main()
