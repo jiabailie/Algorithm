@@ -14,6 +14,7 @@ inline void deleteArray(int len, T** source)
 			free(source[i]);
 		}
 	}
+	free(source);
 }
 
 inline void Prim(const Graph& g, vector<Edge>& MST)
