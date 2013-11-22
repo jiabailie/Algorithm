@@ -10,14 +10,16 @@ int strToint(char* str)
 {
     int i = 0;
     int flg = 1, ret = 0;
-    int len = strlen(str);
 
     /* whether the str is null or the length of the string is 0 */
-    if(str == NULL || len == 0)
+    if(str == NULL || strlen(str) == 0)
     {
         cout << "the string is null." << endl;
         return 0;
     }
+    
+    int len = strlen(str);
+    
     /* judge if the string has sign */
     if(str[0] == '-' || str[0] == '+')
     {
