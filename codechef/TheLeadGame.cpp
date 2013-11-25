@@ -12,6 +12,8 @@ inline int scanInt()
 
 	while((d = getchar()) >= '0')
 	{
+		// retInt = retInt * 10 + (d - '0') = retInt * (8 + 2) + (d - '0')
+		//        = retInt * (2^3 + 2^1) + (d - '0')
 		retInt = (retInt << 3) + (retInt << 1) + (d - '0');
 	}
 
