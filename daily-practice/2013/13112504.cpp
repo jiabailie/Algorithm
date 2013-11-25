@@ -1,4 +1,4 @@
-/* Problem Source : http://bbs.csdn.net/topics/390650933 */
+/* Problem Source : bbs.csdn.net/topics/390650933 */
 #include <cstdio>
 #include <set>
 #include <iostream>
