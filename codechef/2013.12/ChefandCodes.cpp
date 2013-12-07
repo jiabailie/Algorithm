@@ -11,7 +11,7 @@ char sentence[150010];
 
 inline void solve()
 {
-	int cnt[26];
+	int cnt[256];
 	int i = 0, j = 25;
 	map<int, vector<char> > dic;
 	map<char, char> code;
@@ -21,16 +21,21 @@ inline void solve()
 	gets(sentence);
 
 	memset(cnt, 0, sizeof(cnt));
-	for(i = 0; i < strlen(sentence); i++)
+	for(i = 0; i < strlen(sentence); i++) 
+	{ 
+		cnt[sentence[i]]++; 
+	}
+	for(i = 0; i < 256; i++)
 	{
-		if(sentence[i] >= 'a' && sentence[i] <= 'z')
-		{
-			cnt[(sentence[i] - 'a')]++;
+		if(cnt[i] > 0) 
+		{ 
+			code[i] = i; 
 		}
-		else if(sentence[i] >= 'A' && sentence[i] <= 'Z')
-		{
-			cnt[(sentence[i] - 'A')]++;
-		}
+	}
+
+	for(i = 0; i < 26; i++) 
+	{ 
+		cnt[i] = cnt['a' + i] + cnt['A' + i]; 
 	}
 
 	for(i = 0; i < 26; i++)
@@ -46,28 +51,28 @@ inline void solve()
 		for(vector<char>::reverse_iterator iit = it->second.rbegin(); iit != it->second.rend(); iit++)
 		{
 			code[(*iit)] = letter[j--];
+			code[(*iit) - 'a' + 'A'] = code[(*iit)] - 'a' + 'A';
 		}
 	}
 
 	for(i = 0; i < strlen(sentence); i++)
 	{
-		if(sentence[i] >= 'a' && sentence[i] <= 'z')
-		{
-			sentence[i] = code[sentence[i]];
-		}
-		else if(sentence[i] >= 'A' && sentence[i] <= 'Z')
-		{
-			sentence[i] = code[(sentence[i] - 'A' + 'a')] - 'a' + 'A';
-		}
+		printf("%c", code[sentence[i]]);
 	}
 
-	printf("%s\n", sentence);
+	printf("\n");
 }
 
 int main()
 {
 	int t = 0;
 	int i = 0;
+
+	unsigned char c[258];
+	for(i = 0; i < 258; i++)
+	{
+		c[i] = i;
+	}
 
 	scanf("%d", &t);
 	getchar();
