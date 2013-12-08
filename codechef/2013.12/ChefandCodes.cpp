@@ -27,10 +27,7 @@ inline void solve()
 	}
 	for(i = 0; i < 256; i++)
 	{
-		if(cnt[i] > 0) 
-		{ 
-			code[i] = i; 
-		}
+		code[i] = i; 
 	}
 
 	for(i = 0; i < 26; i++) 
