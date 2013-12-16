@@ -13,8 +13,7 @@
 #include <cmath>
 
 #define DEBUG
-#undef	DEBUG
-
+//#undef	DEBUG
 using namespace std;
 
 const int MAX = 61;
@@ -23,6 +22,8 @@ const int MAX_COLOR = 5;
 const int dx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
 
 const int dy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
+
+const int csign[6] = {1, 2, 4, 8, 16, 32};
 
 struct point
 {
@@ -52,20 +53,29 @@ inline int manhattanDis(point pa, point pb)
 class ColorLinker
 {
 public:
-
+	/* Class parameters */
 #ifdef	DEBUG
 	int cnt;
 #endif	DEBUG
 
-	int gridSize;
+	int gridSize; // the board size is (gridSize * gridSize).
 
-	vector<int> ret;
+	int penalty; // save the penalty which is inputted.
 
-	vector<vector<char> > grid;
+	long cpenalty; // save the penalty score of this status.
 
-	map<int, vector<point> > statis;
+	vector<int> ret; // process result
 
-	void adjust(int);
+	vector<vector<int> > grid; // save the board status, if some cell(i,j) is painted by 1 and 3,  grid[i][j] = (2 ^ 1) | (2 ^ 3).
+
+	map<int, vector<point> > statis; // statis[i].second saves all positions which is painted by statis[i].first.
+
+	/* Class functions */
+	void adjust(int); // adjust the board to minimize the penalty.
+
+	void find(int&, int&, const point&); // find the nearest point which has same color.
+
+	bool judge(const point&); // judge whether current point's top/left/bottom/right positions have same color points.
 
 	vector<int> link(vector <string>, int);
 
@@ -73,31 +83,65 @@ public:
 #ifdef	DEBUG
 	cnt(0), 
 #endif
-	gridSize(0) 
+	gridSize(0), penalty(0), cpenalty(0)
 	{ 
+		ret.clear();
+		grid.clear();
 		statis.clear(); 
 	}
 };
 
 void ColorLinker::adjust(int color)
 {
+	vector<point> cpoint(statis[color].begin(), statis[color].end());
+
+	for(vector<point>::iterator it = cpoint.begin(); it != cpoint.end(); it++)
+	{
+		if(!judge(*it))
+		{
+
+		}
+	}
+}
+
+void ColorLinker::find(int& fpx, int& fpy, const point& p)
+{
 
 }
 
-vector<int> ColorLinker::link(vector<string> board, int penalty)
+bool ColorLinker::judge(const point& p)
+{
+	int i = 0;
+	int nx = 0, ny = 0;
+	bool ret = false;
+
+	for(i = 0; i < 4; i++)
+	{
+		nx = p.x + dx[i];
+		ny = p.y + dy[i];
+
+		if(nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize && (grid[p.x][p.y] & grid[nx][ny]))
+		{
+			ret = true;
+			break;
+		}
+	}
+	return ret;
+}
+
+vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 {
 	int i = 0;
 	int j = 0;
 	
+	penalty = ipenalty;
 	gridSize = board.size();		
 
 	for(i = 0; i < gridSize; i++)
 	{
-		vector<char> row;
+		vector<int> row(gridSize, 0);
 		for(j = 0; j < gridSize; j++)
 		{
-			row.push_back(board[i][j]);
-
 			if(board[i][j] != '-')
 			{
 #ifdef	DEBUG
@@ -109,6 +153,7 @@ vector<int> ColorLinker::link(vector<string> board, int penalty)
 				ret.push_back(int(board[i][j] - '0'));
 
 				statis[(board[i][j] - '0')].push_back(point(i, j));
+				row[j] |= csign[int(board[i][j] - '0')];
 			}
 		}
 		grid.push_back(row);
