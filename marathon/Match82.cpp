@@ -9,11 +9,20 @@
 #include <map>
 #include <algorithm>
 #include <cstring>
+#include <set>
+#include <cmath>
+
+#define DEBUG
+#undef	DEBUG
 
 using namespace std;
 
 const int MAX = 61;
 const int MAX_COLOR = 5;
+
+const int dx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
+
+const int dy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
 
 struct point
 {
@@ -30,24 +39,57 @@ struct point
 	~point(){}
 };
 
+inline int manhattanDis(int x1, int y1, int x2, int y2)
+{
+	return abs(x1 - x2) + abs(y1 - y2);
+}
+
+inline int manhattanDis(point pa, point pb)
+{
+	return abs(pa.x - pb.x) + abs(pa.y - pb.y);
+}
+
 class ColorLinker
 {
 public:
+
+#ifdef	DEBUG
 	int cnt;
+#endif	DEBUG
+
 	int gridSize;
+
+	vector<int> ret;
+
 	vector<vector<char> > grid;
+
 	map<int, vector<point> > statis;
+
+	void adjust(int);
+
 	vector<int> link(vector <string>, int);
-	ColorLinker() : cnt(0), gridSize(0) { statis.clear(); }
+
+	ColorLinker() : 
+#ifdef	DEBUG
+	cnt(0), 
+#endif
+	gridSize(0) 
+	{ 
+		statis.clear(); 
+	}
 };
+
+void ColorLinker::adjust(int color)
+{
+
+}
 
 vector<int> ColorLinker::link(vector<string> board, int penalty)
 {
 	int i = 0;
 	int j = 0;
 	
-	gridSize = board.size();
-	vector<int> ret;	
+	gridSize = board.size();		
 
 	for(i = 0; i < gridSize; i++)
 	{
@@ -55,10 +97,18 @@ vector<int> ColorLinker::link(vector<string> board, int penalty)
 		for(j = 0; j < gridSize; j++)
 		{
 			row.push_back(board[i][j]);
+
 			if(board[i][j] != '-')
 			{
+#ifdef	DEBUG
+				cnt += 3;
+#endif
+
+				ret.push_back(i);
+				ret.push_back(j);
+				ret.push_back(int(board[i][j] - '0'));
+
 				statis[(board[i][j] - '0')].push_back(point(i, j));
-				cnt++;
 			}
 		}
 		grid.push_back(row);
@@ -94,7 +144,8 @@ int main()
 	
 	vector<int> ret = c.link(board, penalty);
 
-	cout << (c.cnt * 3) << endl;
+#ifdef	DEBUG
+	cout << c.cnt << endl;
 	
 	for(map<int, vector<point> >::iterator imap = c.statis.begin(); imap != c.statis.end(); imap++)
 	{
@@ -105,5 +156,6 @@ int main()
 			cout << imap->first << endl;
 		}
 	}	
+#endif
 	return 0;
 }
