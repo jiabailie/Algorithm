@@ -191,7 +191,7 @@ void ColorLinker::paint(int color, point& a, point& b)
 		grid[i][sy] |= csign[color];
 		statis[color].push_back(point(i, sy));
 #ifdef	DEBUG
-				cnt += 3;
+		cnt += 3;
 #endif
 		ret.push_back(i);
 		ret.push_back(sy);
@@ -203,7 +203,7 @@ void ColorLinker::paint(int color, point& a, point& b)
 		grid[ex][i] |= csign[color];
 		statis[color].push_back(point(ex, i));
 #ifdef	DEBUG
-				cnt += 3;
+		cnt += 3;
 #endif
 		ret.push_back(ex);
 		ret.push_back(i);
@@ -229,7 +229,6 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 #ifdef	DEBUG
 				cnt += 3;
 #endif
-
 				ret.push_back(i);
 				ret.push_back(j);
 				ret.push_back(int(board[i][j] - '0'));
