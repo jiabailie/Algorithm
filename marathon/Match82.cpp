@@ -1,3 +1,7 @@
+/*
+ * Reference: community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=34370&rd=15825
+ * Test tool: www.topcoder.com/contest/problem/ColorLinker/manual.html
+ */
 #include <cstdio>
 #include <iostream>
 #include <vector>
