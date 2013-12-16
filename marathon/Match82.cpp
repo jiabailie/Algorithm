@@ -1,6 +1,7 @@
 /*
  * Reference: community.topcoder.com/longcontest/?module=ViewProblemStatement&compid=34370&rd=15825
  * Test tool: www.topcoder.com/contest/problem/ColorLinker/manual.html
+ * Debug call: java -jar ColorLinkerVis.jar -exec clab.exe -seed 1
  */
 #include <cstdio>
 #include <iostream>
