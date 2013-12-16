@@ -50,6 +50,9 @@ inline int manhattanDis(const point& a, const point& b)
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
+inline int imin(int a, int b) { return a < b ? a : b; }
+inline int imax(int a, int b) { return a > b ? a : b; }
+
 class ColorLinker
 {
 public:
@@ -179,7 +182,33 @@ bool ColorLinker::judge(const point& p)
 
 void ColorLinker::paint(int color, point& a, point& b)
 {
+	int i = 0;
+	int sx = imin(a.x, b.x), ex = imax(a.y, b.y);
+	int sy = imin(a.y, b.y), ey = imax(a.y, b.y);
 
+	for(i = sx; i <= ex; i++)
+	{
+		grid[i][sy] |= csign[color];
+		statis[color].push_back(point(i, sy));
+#ifdef	DEBUG
+				cnt += 3;
+#endif
+		ret.push_back(i);
+		ret.push_back(sy);
+		ret.push_back(color);
+	}
+
+	for(i = sy + 1; i <= ey; i++)
+	{
+		grid[ex][i] |= csign[color];
+		statis[color].push_back(point(ex, i));
+#ifdef	DEBUG
+				cnt += 3;
+#endif
+		ret.push_back(ex);
+		ret.push_back(i);
+		ret.push_back(color);
+	}
 }
 
 vector<int> ColorLinker::link(vector<string> board, int ipenalty)
@@ -210,6 +239,11 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 			}
 		}
 		grid.push_back(row);
+	}
+
+	for(map<int, vector<point> >::iterator it = statis.begin(); it != statis.end(); it++)
+	{
+		adjust(it->first);
 	}
 
 	return ret;
