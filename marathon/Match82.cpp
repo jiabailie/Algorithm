@@ -11,13 +11,17 @@
 #include <cstring>
 #include <set>
 #include <cmath>
+#include <climits>
 
 #define DEBUG
 //#undef	DEBUG
 using namespace std;
 
 const int MAX = 61;
+
 const int MAX_COLOR = 5;
+
+const int MAX_DIS = 10000;
 
 const int dx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
 
@@ -29,6 +33,7 @@ struct point
 {
 	int x;
 	int y;
+	point() : x(0), y(0) {}
 	point(int _x, int _y) : x(_x), y(_y) {}
 	point(const point& _point) : x(_point.x), y(_point.y){}
 	point& operator=(const point& _point)
@@ -40,14 +45,9 @@ struct point
 	~point(){}
 };
 
-inline int manhattanDis(int x1, int y1, int x2, int y2)
+inline int manhattanDis(const point& a, const point& b)
 {
-	return abs(x1 - x2) + abs(y1 - y2);
-}
-
-inline int manhattanDis(point pa, point pb)
-{
-	return abs(pa.x - pb.x) + abs(pa.y - pb.y);
+	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
 class ColorLinker
@@ -73,9 +73,11 @@ public:
 	/* Class functions */
 	void adjust(int); // adjust the board to minimize the penalty.
 
-	void find(int&, int&, const point&); // find the nearest point which has same color.
+	void find(int, int&, int&, const point&); // find the nearest point which has same color.
 
 	bool judge(const point&); // judge whether current point's top/left/bottom/right positions have same color points.
+
+	void paint(int, point&, point&); // paint the path from point A to point B using color.
 
 	vector<int> link(vector <string>, int);
 
@@ -93,20 +95,66 @@ public:
 
 void ColorLinker::adjust(int color)
 {
+	int i = 0, j = 0;
+
 	vector<point> cpoint(statis[color].begin(), statis[color].end());
+	int len = int(cpoint.size());
 
-	for(vector<point>::iterator it = cpoint.begin(); it != cpoint.end(); it++)
+	if(len == 1)
 	{
-		if(!judge(*it))
-		{
+		return;
+	}
 
+	int minDis = MAX_DIS;
+	int tmpDis = 0;
+	point startPoint;
+	point endPoint;
+
+	while(true)
+	{
+		minDis = MAX_DIS;
+		for(i = 0; i < len - 1; i++)
+		{
+			for(j = i + 1; j < len; j++)
+			{
+				tmpDis = manhattanDis(cpoint[i], cpoint[j]);
+				if(tmpDis > 1 && tmpDis < minDis)
+				{
+					minDis = tmpDis;
+					startPoint = cpoint[i];
+					endPoint = cpoint[j];
+				}
+			}
 		}
+
+		if(minDis == MAX_DIS)
+		{
+			break;
+		}
+
+		paint(color, startPoint, endPoint);
 	}
 }
 
-void ColorLinker::find(int& fpx, int& fpy, const point& p)
+void ColorLinker::find(int color, int& fpx, int& fpy, const point& p)
 {
+	int i = 0;
+	int tmpDis = 0;
+	int minDis = MAX_DIS;
 
+	for(i = 0; i < int(statis[color].size()); i++)
+	{
+		if(p.x != statis[color][i].x || p.y != statis[color][i].y)
+		{
+			tmpDis = manhattanDis(p, statis[color][i]);
+			if(tmpDis < minDis)
+			{
+				minDis = tmpDis;
+				fpx = statis[color][i].x;
+				fpy = statis[color][i].y;
+			}
+		}
+	}
 }
 
 bool ColorLinker::judge(const point& p)
@@ -127,6 +175,11 @@ bool ColorLinker::judge(const point& p)
 		}
 	}
 	return ret;
+}
+
+void ColorLinker::paint(int color, point& a, point& b)
+{
+
 }
 
 vector<int> ColorLinker::link(vector<string> board, int ipenalty)
