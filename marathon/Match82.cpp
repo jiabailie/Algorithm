@@ -93,7 +93,6 @@ struct component
 	~component(){}
 };
 
-
 class ColorLinker
 {
 public:
@@ -123,20 +122,14 @@ public:
 	// statis[i].second saves all positions which is painted by statis[i].first.
 	map<int, vector<point> > statis; 
 
-	// adjust the board to minimize the penalty.
-	inline void adjust(int); 
-
 	// judge if (x, y) in the range of this grid.
 	inline bool judgePosInRange(int, int);
-
-	// find the nearest point which has same color.
-	inline void find(int, int&, int&, const point&); 
 
 	// judge whether current point's top/left/bottom/right positions have same color points.
 	inline bool judge(const point&); 
 
-	// paint the path from point A to point B using color.
-	inline void paint(int, point&, point&); 
+	// find the nearest point which has same color.
+	inline void find(int, int&, int&, const point&); 
 
 	// do breadth first search to find how many discrete connected-component in this image
 	// search all points painted by color
@@ -144,6 +137,12 @@ public:
 
 	// do breadth first search to find how many discrete connected-component in this image
 	inline component bfs(int, point&);
+
+	// paint the path from point A to point B using color.
+	inline void paint(int, point&, point&); 
+
+	// adjust the board to minimize the penalty.
+	inline void adjust(int); 
 
 	vector<int> link(vector <string>, int);
 
@@ -168,49 +167,6 @@ inline int manhattanDis(const point& a, const point& b)
 	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
-inline void ColorLinker::adjust(int color)
-{
-	int i = 0, j = 0;
-
-	vector<point> cpoint(statis[color].begin(), statis[color].end());
-	int len = int(cpoint.size());
-
-	if(len == 1)
-	{
-		return;
-	}
-
-	int minDis = MAX_DIS;
-	int tmpDis = 0;
-	point startPoint;
-	point endPoint;
-
-	while(true)
-	{
-		minDis = MAX_DIS;
-		for(i = 0; i < len - 1; i++)
-		{
-			for(j = i + 1; j < len; j++)
-			{
-				tmpDis = manhattanDis(cpoint[i], cpoint[j]);
-				if(tmpDis > 1 && tmpDis < minDis)
-				{
-					minDis = tmpDis;
-					startPoint = cpoint[i];
-					endPoint = cpoint[j];
-				}
-			}
-		}
-
-		if(minDis == MAX_DIS)
-		{
-			break;
-		}
-
-		paint(color, startPoint, endPoint);
-	}
-}
-
 inline bool ColorLinker::judgePosInRange(int x, int y)
 {
 	bool ret = false;
@@ -219,27 +175,6 @@ inline bool ColorLinker::judgePosInRange(int x, int y)
 		ret = true;
 	}
 	return ret;
-}
-
-inline void ColorLinker::find(int color, int& fpx, int& fpy, const point& p)
-{
-	int i = 0;
-	int tmpDis = 0;
-	int minDis = MAX_DIS;
-
-	for(i = 0; i < int(statis[color].size()); i++)
-	{
-		if(p.x != statis[color][i].x || p.y != statis[color][i].y)
-		{
-			tmpDis = manhattanDis(p, statis[color][i]);
-			if(tmpDis < minDis)
-			{
-				minDis = tmpDis;
-				fpx = statis[color][i].x;
-				fpy = statis[color][i].y;
-			}
-		}
-	}
 }
 
 inline bool ColorLinker::judge(const point& p)
@@ -262,34 +197,24 @@ inline bool ColorLinker::judge(const point& p)
 	return ret;
 }
 
-inline void ColorLinker::paint(int color, point& a, point& b)
+inline void ColorLinker::find(int color, int& fpx, int& fpy, const point& p)
 {
 	int i = 0;
-	int sx = imin(a.x, b.x), ex = imax(a.y, b.y);
-	int sy = imin(a.y, b.y), ey = imax(a.y, b.y);
+	int tmpDis = 0;
+	int minDis = MAX_DIS;
 
-	for(i = sx; i <= ex; i++)
+	for(i = 0; i < int(statis[color].size()); i++)
 	{
-		grid[i][sy] |= csign[color];
-		statis[color].push_back(point(i, sy));
-#ifdef	DEBUG
-		cnt += 3;
-#endif
-		ret.push_back(i);
-		ret.push_back(sy);
-		ret.push_back(color);
-	}
-
-	for(i = sy + 1; i <= ey; i++)
-	{
-		grid[ex][i] |= csign[color];
-		statis[color].push_back(point(ex, i));
-#ifdef	DEBUG
-		cnt += 3;
-#endif
-		ret.push_back(ex);
-		ret.push_back(i);
-		ret.push_back(color);
+		if(p.x != statis[color][i].x || p.y != statis[color][i].y)
+		{
+			tmpDis = manhattanDis(p, statis[color][i]);
+			if(tmpDis < minDis)
+			{
+				minDis = tmpDis;
+				fpx = statis[color][i].x;
+				fpy = statis[color][i].y;
+			}
+		}
 	}
 }
 
@@ -352,6 +277,77 @@ inline component ColorLinker::bfs(int color, point& p)
 	return segment;
 }
 
+inline void ColorLinker::paint(int color, point& a, point& b)
+{
+	int i = 0;
+	int sx = imin(a.x, b.x), ex = imax(a.y, b.y);
+	int sy = imin(a.y, b.y), ey = imax(a.y, b.y);
+
+	for(i = sx; i <= ex; i++)
+	{
+		grid[i][sy] |= csign[color];
+		statis[color].push_back(point(i, sy));
+#ifdef	DEBUG
+		cnt += 3;
+#endif
+		ret.push_back(i);
+		ret.push_back(sy);
+		ret.push_back(color);
+	}
+
+	for(i = sy + 1; i <= ey; i++)
+	{
+		grid[ex][i] |= csign[color];
+		statis[color].push_back(point(ex, i));
+#ifdef	DEBUG
+		cnt += 3;
+#endif
+		ret.push_back(ex);
+		ret.push_back(i);
+		ret.push_back(color);
+	}
+}
+
+inline void ColorLinker::adjust(int color)
+{
+	int i = 0, j = 0;
+
+	vector<point> cpoint(statis[color].begin(), statis[color].end());
+	int len = int(cpoint.size());
+
+	if(len == 1) { return; }
+
+	int minDis = MAX_DIS;
+	int tmpDis = 0;
+
+	point startPoint;
+	point endPoint;
+
+	vector<component> com = findcc(color);
+
+	while(com.size() > 1)
+	{
+		minDis = MAX_DIS;
+		for(i = 0; i < len - 1; i++)
+		{
+			for(j = i + 1; j < len; j++)
+			{
+				tmpDis = manhattanDis(cpoint[i], cpoint[j]);
+				if(tmpDis > 1 && tmpDis < minDis)
+				{
+					minDis = tmpDis;
+					startPoint = cpoint[i];
+					endPoint = cpoint[j];
+				}
+			}
+		}
+
+		if(minDis == MAX_DIS) { break; }
+
+		paint(color, startPoint, endPoint);
+	}
+}
+
 vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 {
 	int i = 0;
@@ -380,8 +376,6 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 		}
 		grid.push_back(row);
 	}
-
-	vector<component> com = findcc(0);
 
 	for(map<int, vector<point> >::iterator it = statis.begin(); it != statis.end(); it++)
 	{
