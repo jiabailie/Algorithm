@@ -233,7 +233,9 @@ inline vector<component> ColorLinker::findcc(int color)
 
 	for(i = 0; i < statis[color].size() - 1; i++)
 	{
-		if((grid[statis[color][i].x][statis[color][i].y] & csign[color]) && !visited[statis[color][i].x][statis[color][i].y])
+		if((grid[statis[color][i].x][statis[color][i].y] & csign[color]) 
+			&& 
+			!visited[statis[color][i].x][statis[color][i].y])
 		{
 			ret.push_back(bfs(color, point(statis[color][i].x, statis[color][i].y)));
 		}
