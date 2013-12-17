@@ -12,6 +12,7 @@
 #include <set>
 #include <cmath>
 #include <climits>
+#include <queue>
 
 #define DEBUG
 //#undef	DEBUG
@@ -27,60 +28,122 @@ const int dx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
 
 const int dy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
 
+// csign[i] means that cell is painted with color i.
 const int csign[6] = {1, 2, 4, 8, 16, 32};
 
 struct point
 {
 	int x;
 	int y;
+
 	point() : x(0), y(0) {}
+
 	point(int _x, int _y) : x(_x), y(_y) {}
+
 	point(const point& _point) : x(_point.x), y(_point.y){}
+
 	point& operator=(const point& _point)
 	{
-		this->x = _point.x;
-		this->y = _point.y;
+		if(this != &_point)
+		{
+			this->x = _point.x;
+			this->y = _point.y;
+
+			return *this;
+		}
+
 		return *this;
 	}
+
 	~point(){}
 };
 
-inline int manhattanDis(const point& a, const point& b)
+struct component
 {
-	return abs(a.x - b.x) + abs(a.y - b.y);
-}
+	int num;
+	int color;
+	vector<point> points;
 
-inline int imin(int a, int b) { return a < b ? a : b; }
-inline int imax(int a, int b) { return a > b ? a : b; }
+	component() : num(0), color(0) {}
+
+	component(int _num, int _color, vector<point>& _points) : 
+			num(_num), 
+			color(_color), 
+			points(vector<point>(_points.begin(), _points.end())) {}
+
+	component(const component& _component) : 
+			num(_component.num), 
+			color(_component.color), 
+			points(vector<point>(_component.points.begin(), _component.points.end())) {}
+
+	component& operator=(const component& _component)
+	{
+		if(this != &_component)
+		{
+			this->num = _component.num;
+			this->color = _component.color;
+			this->points = vector<point>(_component.points.begin(), _component.points.end());
+
+			return *this;
+		}
+
+		return *this;
+	}
+
+	~component(){}
+};
+
 
 class ColorLinker
 {
 public:
-	/* Class parameters */
 #ifdef	DEBUG
 	int cnt;
 #endif	DEBUG
 
-	int gridSize; // the board size is (gridSize * gridSize).
+	// the board size is (gridSize * gridSize).
+	int gridSize; 
 
-	int penalty; // save the penalty which is inputted.
+	// save the penalty which is inputted.
+	int penalty; 
 
-	long cpenalty; // save the penalty score of this status.
+	// save the penalty score of this status.
+	long cpenalty; 
 
-	vector<int> ret; // process result
+	// process result
+	vector<int> ret; 
 
-	vector<vector<int> > grid; // save the board status, if some cell(i,j) is painted by 1 and 3,  grid[i][j] = (2 ^ 1) | (2 ^ 3).
+	// visited array
+	bool visited[MAX][MAX];
 
-	map<int, vector<point> > statis; // statis[i].second saves all positions which is painted by statis[i].first.
+	// save the board status, if some cell(i,j) is painted by 1 and 3
+	// grid[i][j] = (2 ^ 1) | (2 ^ 3).
+	vector<vector<int> > grid; 
 
-	/* Class functions */
-	void adjust(int); // adjust the board to minimize the penalty.
+	// statis[i].second saves all positions which is painted by statis[i].first.
+	map<int, vector<point> > statis; 
 
-	void find(int, int&, int&, const point&); // find the nearest point which has same color.
+	// adjust the board to minimize the penalty.
+	inline void adjust(int); 
 
-	bool judge(const point&); // judge whether current point's top/left/bottom/right positions have same color points.
+	// judge if (x, y) in the range of this grid.
+	inline bool judgePosInRange(int, int);
 
-	void paint(int, point&, point&); // paint the path from point A to point B using color.
+	// find the nearest point which has same color.
+	inline void find(int, int&, int&, const point&); 
+
+	// judge whether current point's top/left/bottom/right positions have same color points.
+	inline bool judge(const point&); 
+
+	// paint the path from point A to point B using color.
+	inline void paint(int, point&, point&); 
+
+	// do breadth first search to find how many discrete connected-component in this image
+	// search all points painted by color
+	inline vector<component> findcc(int);
+
+	// do breadth first search to find how many discrete connected-component in this image
+	inline component bfs(int, point&);
 
 	vector<int> link(vector <string>, int);
 
@@ -96,7 +159,16 @@ public:
 	}
 };
 
-void ColorLinker::adjust(int color)
+inline int imin(int a, int b) { return a < b ? a : b; }
+
+inline int imax(int a, int b) { return a > b ? a : b; }
+
+inline int manhattanDis(const point& a, const point& b)
+{
+	return abs(a.x - b.x) + abs(a.y - b.y);
+}
+
+inline void ColorLinker::adjust(int color)
 {
 	int i = 0, j = 0;
 
@@ -139,7 +211,17 @@ void ColorLinker::adjust(int color)
 	}
 }
 
-void ColorLinker::find(int color, int& fpx, int& fpy, const point& p)
+inline bool ColorLinker::judgePosInRange(int x, int y)
+{
+	bool ret = false;
+	if(x >= 0 && x < gridSize && y >= 0 && y < gridSize)
+	{
+		ret = true;
+	}
+	return ret;
+}
+
+inline void ColorLinker::find(int color, int& fpx, int& fpy, const point& p)
 {
 	int i = 0;
 	int tmpDis = 0;
@@ -160,7 +242,7 @@ void ColorLinker::find(int color, int& fpx, int& fpy, const point& p)
 	}
 }
 
-bool ColorLinker::judge(const point& p)
+inline bool ColorLinker::judge(const point& p)
 {
 	int i = 0;
 	int nx = 0, ny = 0;
@@ -171,7 +253,7 @@ bool ColorLinker::judge(const point& p)
 		nx = p.x + dx[i];
 		ny = p.y + dy[i];
 
-		if(nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize && (grid[p.x][p.y] & grid[nx][ny]))
+		if(judgePosInRange(nx, ny) && (grid[p.x][p.y] & grid[nx][ny]))
 		{
 			ret = true;
 			break;
@@ -180,7 +262,7 @@ bool ColorLinker::judge(const point& p)
 	return ret;
 }
 
-void ColorLinker::paint(int color, point& a, point& b)
+inline void ColorLinker::paint(int color, point& a, point& b)
 {
 	int i = 0;
 	int sx = imin(a.x, b.x), ex = imax(a.y, b.y);
@@ -209,6 +291,65 @@ void ColorLinker::paint(int color, point& a, point& b)
 		ret.push_back(i);
 		ret.push_back(color);
 	}
+}
+
+inline vector<component> ColorLinker::findcc(int color)
+{
+	int i = 0, j = 0;
+	vector<component> ret;
+
+	memset(visited, 0, sizeof(bool) * gridSize * gridSize);
+
+	for(i = 0; i < gridSize; i++)
+	{
+		for(j = 0; j < gridSize; j++)
+		{
+			if((grid[i][j] & csign[color]) && !visited[i][j])
+			{
+				ret.push_back(bfs(color, point(i, j)));
+			}
+		}
+	}
+
+	return ret;
+}
+
+inline component ColorLinker::bfs(int color, point& p)
+{
+	int i = 0;
+	int nx = 0;
+	int ny = 0;
+	point top;
+	component segment;
+	queue<point> iqueue;
+
+	segment.color = color;
+	segment.points.clear();
+
+	iqueue.push(p);
+
+	while(!iqueue.empty())
+	{
+		top = iqueue.front();
+		iqueue.pop();
+
+		visited[top.x][top.y] = true;
+		segment.num += 1;
+		segment.points.push_back(top);
+
+		for(i = 0; i < 4; i++)
+		{
+			nx = top.x + dx[i];
+			ny = top.y + dy[i];
+
+			if(judgePosInRange(nx, ny) && (csign[color] & grid[nx][ny]) && !visited[nx][ny])
+			{
+				iqueue.push(point(nx, ny));
+			}
+		}
+	}
+
+	return segment;
 }
 
 vector<int> ColorLinker::link(vector<string> board, int ipenalty)
@@ -240,6 +381,8 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 		grid.push_back(row);
 	}
 
+	vector<component> com = findcc(0);
+
 	for(map<int, vector<point> >::iterator it = statis.begin(); it != statis.end(); it++)
 	{
 		adjust(it->first);
@@ -254,17 +397,86 @@ int main()
 	int gridSize = 0;
 	int penalty = 0;
 	ColorLinker c;
-	char grid[MAX][MAX];
+	char grid[MAX][MAX]
+#ifdef DEBUG
+	=
+{
+"-------------------------------------------------3---------2",
+"--------------2---------------2-----------------------------",
+"-----------------------------------0----------------------2-",
+"------------------------------------------------2-----------",
+"----------------2-------------------3----------------1------",
+"-------------2-------------------------------------1--------",
+"-----------------------------------------------------2------",
+"3------------------------------2----------------------------",
+"-3-------------0----2-------------------------2----2--------",
+"--------------2---------------------0-----------------------",
+"------------------------------------------------------------",
+"-------------------1----------------------------------------",
+"------------------------------------------------------------",
+"---------3--------2-----------------------------------------",
+"---------------------1--------------------------------------",
+"1------------------3-----------2------------2---------------",
+"------------------------------------------------------------",
+"---------1--------------------------------------------------",
+"------0-----------------------------------------------------",
+"3----------------------------------------------------------0",
+"--------1-2-------------------------------------------------",
+"------------------------------------------------------------",
+"--------1-------------3-------------------------------------",
+"--------------------------------------------------2----3----",
+"----------------------------------------------3-------------",
+"------------------------------------------------------------",
+"-----------------------------------1------------------------",
+"------1-----------------------------------------------------",
+"------------------------------------------------------3-----",
+"---------------------------------------------2------------3-",
+"------------------------------2-----------------------------",
+"-----------------1-----------------------------2------------",
+"----------------2---0---------------------------------------",
+"------------------------------------------------------------",
+"-------------------3---------2------------------------------",
+"----------3-----------------------------------------2--1--0-",
+"----------------1-----------------2-------------------------",
+"--------------------------------------------------------2---",
+"------------------0------------------------------3----------",
+"-------------2----------------------------------------------",
+"------------------------------------------------------------",
+"------------------------------------------------------------",
+"---------------------4------2-------1-----------------------",
+"------------------------------------------------------------",
+"---------------------------------------1--------------------",
+"---------------------------2-------------------3------------",
+"----------------------3-------------------------------------",
+"-----------2---------------------------------------2--------",
+"------------------------------------------------------------",
+"------------------4----------------------------4-----1------",
+"-------3-3-------0------------------------------------------",
+"---------------------------------------1-------3------------",
+"--------------0---------------------------------------------",
+"---------------------2--------------------------------------",
+"------------------------------------------------------------",
+"------------------------------------------------------------",
+"------------0-----------------------------------------------",
+"---------------------------------------------------1--------",
+"------------------------3-----------------------------------",
+"---------------------22-------------------------------------"
+};
+#endif
+	;
 
+#ifdef	DEBUG
+	gridSize = 60;
+	penalty = 328;
+#else
 	memset(grid, 0, sizeof(grid));
-	
 	cin >> gridSize;
 	cin >> penalty;
-	
 	for(i = 0; i < gridSize; i++)
 	{
 		cin >> grid[i];
 	}
+#endif
 
 	vector<string> board;
 	for(i = 0; i < gridSize; i++)
