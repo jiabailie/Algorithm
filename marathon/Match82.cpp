@@ -150,7 +150,10 @@ public:
 	inline component bfs(int, point&);
 
 	// paint the path from point A to point B using color.
-	inline void paint(int, point&, point&, component&); 
+	inline void paint(int, point&, point&, component&); 	
+	
+	// paint the line from point A to point B using color.
+	inline void paintline(int, point&, point&, component&); 
 
 	// adjust the board to minimize the penalty.
 	inline void adjust(int); 
@@ -172,6 +175,13 @@ inline int imax(int a, int b) { return a > b ? a : b; }
 inline int manhattanDis(const point& a, const point& b)
 {
 	return abs(a.x - b.x) + abs(a.y - b.y);
+}
+
+inline void swappoint(point& a, point& b)
+{
+	point c(a);
+	a = b;
+	b = c;
 }
 
 inline bool ColorLinker::judgePosInRange(int x, int y)
@@ -230,9 +240,9 @@ inline vector<component> ColorLinker::findcc(int color)
 	int i = 0;
 	vector<component> ret;
 
-	memset(visited, 0, sizeof(bool) * gridSize * gridSize);
+	memset(visited, 0, sizeof(visited));
 
-	for(i = 0; i < statis[color].size() - 1; i++)
+	for(i = 0; i < statis[color].size(); i++)
 	{
 		if(!visited[statis[color][i].x][statis[color][i].y])
 		{
@@ -314,35 +324,74 @@ inline component ColorLinker::bfs(int color, point& p)
 inline void ColorLinker::paint(int color, point& a, point& b, component& cc)
 {
 	int i = 0;
-	int sx = imin(a.x, b.x), ex = imax(a.y, b.y);
-	int sy = imin(a.y, b.y), ey = imax(a.y, b.y);
 
-	for(i = sx; i <= ex; i++)
+	if(a.x == b.x || a.y == b.y)
 	{
-		grid[i][sy] |= csign[color];
-		statis[color].push_back(point(i, sy));
-
-		cc.add(point(i, sy));
-
-		cnt += 3;
-
-		ret.push_back(i);
-		ret.push_back(sy);
-		ret.push_back(color);
+		paintline(color, a, b, cc);
 	}
-
-	for(i = sy + 1; i <= ey; i++)
+	else
 	{
-		grid[ex][i] |= csign[color];
-		statis[color].push_back(point(ex, i));
+		point c(b.x, a.y);
+		grid[b.x][a.y] |= csign[color];
+		statis[color].push_back(c);
 
-		cc.add(point(ex, i));
+		cc.add(c);
 
 		cnt += 3;
 
-		ret.push_back(ex);
-		ret.push_back(i);
+		ret.push_back(b.x);
+		ret.push_back(a.y);
 		ret.push_back(color);
+
+		paintline(color, a, c, cc);
+		paintline(color, c, b, cc);
+	}
+}
+
+inline void ColorLinker::paintline(int color, point& a, point& b, component& cc)
+{
+	int i = 0;
+	int s = 0, e = 0;
+	point c;
+
+	if(a.x == b.x)
+	{
+		s = imin(a.y, b.y);
+		e = imax(a.y, b.y);
+
+		for(i = s + 1; i < e; i++)
+		{
+			c = point(a.x, i);
+			grid[a.x][i] |= csign[color];
+			statis[color].push_back(c);
+
+			cc.add(c);
+
+			cnt += 3;
+
+			ret.push_back(a.x);
+			ret.push_back(i);
+			ret.push_back(color);
+		}
+	}
+	else if(a.y == b.y)
+	{
+		s = imin(a.x, b.x);
+		e = imax(a.x, b.x);
+		for(i = s + 1; i < e; i++)
+		{
+			c = point(i, a.y);
+			grid[i][a.y] |= csign[color];
+			statis[color].push_back(c);
+
+			cc.add(c);
+
+			cnt += 3;
+
+			ret.push_back(i);
+			ret.push_back(a.y);
+			ret.push_back(color);
+		}
 	}
 }
 
@@ -394,6 +443,8 @@ inline void ColorLinker::adjust(int color)
 
 		components.erase(components.begin() + lastJ);
 	}
+
+	i = 0;
 }
 
 vector<int> ColorLinker::link(vector<string> board, int ipenalty)
@@ -545,9 +596,9 @@ int main()
 	{
 		for(vector<point>::iterator it = imap->second.begin(); it != imap->second.end(); it++)
 		{
-			fout << it->x << " ";
-			fout << it->y << " ";
-			fout << imap->first << endl;
+			fout << it->x << " "
+				 << it->y << " "
+				 << imap->first << endl;
 		}
 	}	
 
@@ -560,9 +611,9 @@ int main()
 	{
 		for(vector<point>::iterator it = imap->second.begin(); it != imap->second.end(); it++)
 		{
-			cout << it->x << endl;
-			cout << it->y << endl;
-			cout << imap->first << endl;
+			cout << it->x << endl
+				 << it->y << endl
+				 << imap->first << endl;
 		}
 	}	
 #endif
