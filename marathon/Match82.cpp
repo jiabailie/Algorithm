@@ -3,19 +3,20 @@
  * Test tool: www.topcoder.com/contest/problem/ColorLinker/manual.html
  * Debug call: java -jar ColorLinkerVis.jar -exec clab.exe -seed 1
  */
+#include <map>
+#include <set>
+#include <queue>
+#include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <vector>
-#include <map>
 #include <algorithm>
 #include <cstring>
-#include <set>
-#include <cmath>
 #include <climits>
-#include <queue>
+#include <fstream>
 
 #define DEBUG
-//#undef	DEBUG
+#undef	DEBUG
 using namespace std;
 
 const int MAX = 61;
@@ -233,11 +234,9 @@ inline vector<component> ColorLinker::findcc(int color)
 
 	for(i = 0; i < statis[color].size() - 1; i++)
 	{
-		if((grid[statis[color][i].x][statis[color][i].y] & csign[color]) 
-			&& 
-			!visited[statis[color][i].x][statis[color][i].y])
+		if(!visited[statis[color][i].x][statis[color][i].y])
 		{
-			ret.push_back(bfs(color, point(statis[color][i].x, statis[color][i].y)));
+			ret.push_back(bfs(color, statis[color][i]));
 		}
 	}
 
@@ -351,8 +350,7 @@ inline void ColorLinker::adjust(int color)
 {
 	int i = 0, j = 0;
 
-	vector<point> cpoint(statis[color].begin(), statis[color].end());
-	int len = int(cpoint.size());
+	int len = int(statis[color].size());
 
 	if(len == 1) { return; }
 
@@ -402,6 +400,7 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 {
 	int i = 0;
 	int j = 0;
+	int c = 0;
 	
 	penalty = ipenalty;
 	gridSize = board.size();		
@@ -413,14 +412,16 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 		{
 			if(board[i][j] != '-')
 			{
+				c = board[i][j] - '0';
+
 				cnt += 3;
 
 				ret.push_back(i);
 				ret.push_back(j);
-				ret.push_back(int(board[i][j] - '0'));
+				ret.push_back(c);
 
-				statis[(board[i][j] - '0')].push_back(point(i, j));
-				row[j] |= csign[int(board[i][j] - '0')];
+				statis[c].push_back(point(i, j));
+				row[j] |= csign[c];
 			}
 		}
 		grid.push_back(row);
@@ -530,6 +531,29 @@ int main()
 	
 	vector<int> ret = c.link(board, penalty);
 
+#ifdef	DEBUG
+	ofstream fout("result.txt");
+
+	if(!fout.good())
+	{
+		cout << "the output file is not exist." << endl;
+	}
+
+	fout << c.cnt << endl;
+	
+	for(map<int, vector<point> >::iterator imap = c.statis.begin(); imap != c.statis.end(); imap++)
+	{
+		for(vector<point>::iterator it = imap->second.begin(); it != imap->second.end(); it++)
+		{
+			fout << it->x << " ";
+			fout << it->y << " ";
+			fout << imap->first << endl;
+		}
+	}	
+
+	fout.flush();
+	fout.close();
+#else
 	cout << c.cnt << endl;
 	
 	for(map<int, vector<point> >::iterator imap = c.statis.begin(); imap != c.statis.end(); imap++)
@@ -541,6 +565,7 @@ int main()
 			cout << imap->first << endl;
 		}
 	}	
+#endif
 
 	return 0;
 }
