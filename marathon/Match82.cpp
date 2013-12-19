@@ -140,9 +140,6 @@ public:
 	// judge whether current point's top/left/bottom/right positions have same color points.
 	inline bool judge(int, int); 
 
-	// get how many colors certain cell is painted.
-	inline int getcolorkinds(int, int);
-
 	// calculate the penalty of certain point.
 	inline int calpointpenalty(int, int);
 
@@ -233,19 +230,6 @@ inline bool ColorLinker::judge(int x, int y)
 		}
 	}
 	return ret;
-}
-
-inline int ColorLinker::getcolorkinds(int x, int y)
-{
-	int k = 0;
-	int c = grid[x][y];
-
-	while(c != 0)
-	{
-		k++;
-		c &= (c - 1);
-	}
-	return k;
 }
 
 inline int ColorLinker::calpointpenalty(int x, int y)
