@@ -15,7 +15,7 @@
 #include <climits>
 #include <fstream>
 
-#define	DEBUG
+#define DEBUG
 #undef	DEBUG
 using namespace std;
 
@@ -130,6 +130,10 @@ public:
 	// statis[i].second saves all positions which is painted by statis[i].first.
 	map<int, vector<point> > statis; 
 
+	// all connected components of this seed
+	// separate by color
+	map<int, vector<component> > composet;
+
 	// judge if (x, y) in the range of this grid.
 	inline bool judgePosInRange(int, int);
 
@@ -173,7 +177,7 @@ public:
 	inline void paintline(int, point&, point&, component&); 
 
 	// adjust the board to minimize the penalty.
-	inline void adjust(int); 
+	inline void adjust(); 
 
 	vector<int> link(vector <string>, int);
 
@@ -493,13 +497,13 @@ inline void ColorLinker::paintline(int color, point& a, point& b, component& cc)
 	}
 }
 
-inline void ColorLinker::adjust(int color)
+inline void ColorLinker::adjust()
 {
+	bool flg = false;
 	int i = 0, j = 0;
 
-	int len = int(statis[color].size());
-
-	if(len == 1) { return; }
+	int colorkind = statis.size();
+	int composum = 0;
 
 	int minDis = MAX_DIS;
 	int tmpDis = 0;
@@ -507,6 +511,7 @@ inline void ColorLinker::adjust(int color)
 	int lastI = 0;
 	int lastJ = 0;
 
+	int mcolor = 0;
 	point startPoint;
 	point endPoint;
 	point middle(-1 ,-1);
@@ -515,34 +520,52 @@ inline void ColorLinker::adjust(int color)
 	point tePoint;
 	point tmiddle(-1 ,-1);
 
-	vector<component> components = findcc(color);
-
-	while(components.size() > 1)
+	for(map<int, vector<point> >::iterator it = statis.begin(); it != statis.end(); it++)
 	{
+		composum += it->second.size();
+	}
+
+	while(!flg)
+	{
+		flg = true;
 		minDis = MAX_DIS;
-		
-		for(i = 0; i < components.size() - 1; i++)
+		for(map<int, vector<component> >::iterator it = composet.begin(); it != composet.end(); it++)
 		{
-			for(j = i + 1; j < components.size(); j++)
+			if(it->second.size() > 1)
 			{
-				tmpDis = calCcDis(tsPoint, tmiddle, tePoint, components[i], components[j]);
-				if(tmpDis < minDis)
+				flg = false;
+				for(i = 0; i < it->second.size() - 1; i++)
 				{
-					minDis = tmpDis;
-					startPoint = tsPoint;
-					endPoint = tePoint;
-					middle = tmiddle;
-					lastI = i;
-					lastJ = j;
+					for(j = i + 1; j < it->second.size(); j++)
+					{
+						tmpDis = calCcDis(
+							tsPoint, 
+							tmiddle, 
+							tePoint, 
+							it->second[i], 
+							it->second[j]
+							);
+						if(tmpDis < minDis)
+						{
+							mcolor = it->first;
+							minDis = tmpDis;
+							startPoint = tsPoint;
+							endPoint = tePoint;
+							middle = tmiddle;
+							lastI = i;
+							lastJ = j;
+						}
+					}
 				}
 			}
 		}
 
-		mergecc(components[lastI], components[lastJ]);
-
-		paint(color, startPoint, middle, endPoint, components[lastI]);
-
-		components.erase(components.begin() + lastJ);
+		if(!flg)
+		{
+			mergecc(composet[mcolor][lastI], composet[mcolor][lastJ]);
+			paint(mcolor, startPoint, middle, endPoint, composet[mcolor][lastI]);
+			composet[mcolor].erase(composet[mcolor].begin() + lastJ);
+		}
 	}
 }
 
@@ -551,8 +574,6 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 	int i = 0;
 	int j = 0;
 	int c = 0;
-
-	map<int, vector<int> > order;
 	
 	penalty = ipenalty;
 	gridSize = board.size();		
@@ -583,17 +604,11 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 	}
 
 	for(map<int, vector<point> >::iterator it = statis.begin(); it != statis.end(); it++)
-	{
-		order[it->second.size()].push_back(it->first);
+	{		
+		composet[it->first] = findcc(it->first);
 	}
 
-	for(map<int, vector<int> >::reverse_iterator it = order.rbegin(); it != order.rend(); it++)
-	{
-		for(i = 0; i < it->second.size(); i++)
-		{
-			adjust(it->second[i]);
-		}
-	}
+	adjust();
 
 	return ret;
 }
