@@ -16,7 +16,7 @@
 #include <fstream>
 
 #define DEBUG
-#undef	DEBUG
+#undef  DEBUG
 using namespace std;
 
 const int MAX = 61;
