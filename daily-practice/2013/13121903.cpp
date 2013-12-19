@@ -44,7 +44,7 @@ int main()
 	bool pat[n][n];
 	
 	int sX = 0, sY = 0;
-	int eX = 9, eY = 9;
+	int eX = n - 1, eY = n - 1;
 	int nx = 0, ny = 0;
 
 	int dx[4] = {1, -1, 0, 0};
@@ -86,7 +86,7 @@ int main()
 				if(val[top.x][top.y] + map[nx][ny] < val[nx][ny])
 				{
 					val[nx][ny] = val[top.x][top.y] + map[nx][ny];
-					dir[nx][ny] = top.x * 100 + top.y;
+					dir[nx][ny] = top.x * n + top.y;
 					iqueue.push(point(nx, ny));
 				}
 			}
@@ -100,10 +100,11 @@ int main()
 	{		
 		i = dir[nx][ny];
 		pat[nx][ny] = true;
-		nx = i / 100;
-		ny = i % 100;
+		nx = i / n;
+		ny = i % n;
 	}
 
+	cout << "The map:" << endl;
 	for(i = 0; i < n; i++)
 	{
 		for(j = 0; j < n; j++)
@@ -113,6 +114,7 @@ int main()
 		cout << endl;
 	}
 
+	cout << endl << "The cost grid which is calculated by bfs:" << endl;
 	for(i = 0; i < n; i++)
 	{
 		for(j = 0; j < n; j++)
@@ -122,6 +124,7 @@ int main()
 		cout << endl;
 	}
 
+	cout << endl << "The shortest path:" << endl;
 	for(i = 0; i < n; i++)
 	{
 		for(j = 0; j < n; j++)
