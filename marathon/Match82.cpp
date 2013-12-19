@@ -15,7 +15,7 @@
 #include <climits>
 #include <fstream>
 
-#define	DEBUG
+#define DEBUG
 #undef	DEBUG
 using namespace std;
 
@@ -123,6 +123,9 @@ public:
 	// save the board status, if some cell(i,j) is painted by 1 and 3
 	// grid[i][j] = (2 ^ 1) | (2 ^ 3).
 	vector<vector<int> > grid; 
+
+	// how many color this cell has.
+	vector<vector<int> > cell;
 
 	// statis[i].second saves all positions which is painted by statis[i].first.
 	map<int, vector<point> > statis; 
@@ -243,7 +246,7 @@ inline int ColorLinker::getcolorkinds(const point& p)
 
 inline int ColorLinker::calpointpenalty(const point& p)
 {
-	int k = getcolorkinds(p);
+	int k = cell[p.x][p.y];
 
 	return k + k * (k - 1) * penalty;
 }
@@ -425,6 +428,7 @@ inline void ColorLinker::paint(int color, point& a, point& middle, point& b, com
 	else
 	{
 		grid[middle.x][middle.y] |= csign[color];
+		cell[middle.x][middle.y] += 1;
 		statis[color].push_back(middle);
 
 		cc.add(middle);
@@ -455,6 +459,7 @@ inline void ColorLinker::paintline(int color, point& a, point& b, component& cc)
 		{
 			c = point(a.x, i);
 			grid[a.x][i] |= csign[color];
+			cell[a.x][i] += 1;
 			statis[color].push_back(c);
 
 			cc.add(c);
@@ -474,6 +479,7 @@ inline void ColorLinker::paintline(int color, point& a, point& b, component& cc)
 		{
 			c = point(i, a.y);
 			grid[i][a.y] |= csign[color];
+			cell[i][a.y] += 1;
 			statis[color].push_back(c);
 
 			cc.add(c);
@@ -554,6 +560,7 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 	for(i = 0; i < gridSize; i++)
 	{
 		vector<int> row(gridSize, 0);
+		vector<int> val(gridSize, 0);
 		for(j = 0; j < gridSize; j++)
 		{
 			if(board[i][j] != '-')
@@ -568,9 +575,11 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 
 				statis[c].push_back(point(i, j));
 				row[j] |= csign[c];
+				val[j] = 1;
 			}
 		}
 		grid.push_back(row);
+		cell.push_back(val);
 	}
 
 	for(map<int, vector<point> >::iterator it = statis.begin(); it != statis.end(); it++)
