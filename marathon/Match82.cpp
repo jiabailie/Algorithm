@@ -15,7 +15,7 @@
 #include <climits>
 #include <fstream>
 
-#define DEBUG
+#define	DEBUG
 #undef	DEBUG
 using namespace std;
 
