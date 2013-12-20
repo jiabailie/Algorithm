@@ -299,8 +299,13 @@ inline int ColorLinker::calPenalty(int c, point& a, point& middle, point& b)
 		point m1(a.x, b.y);
 		point m2(b.x, a.y);
 
-		int penalty1 = calLinePenalty(c, a, m1) + calLinePenalty(c, m1, b) + ((grid[a.x][b.y] & csign[c]) ? cpenalty[a.x][b.y] : calpointpenalty(cell[a.x][b.y] + 1));//;
-		int penalty2 = calLinePenalty(c, a, m2) + calLinePenalty(c, m2, b) + calpointpenalty(cell[b.x][a.y] + 1);//cpenalty[b.x][a.y];
+		int penalty1 = calLinePenalty(c, a, m1) + 
+			calLinePenalty(c, m1, b) + 
+			((grid[a.x][b.y] & csign[c]) ? cpenalty[a.x][b.y] : calpointpenalty(cell[a.x][b.y] + 1));
+
+		int penalty2 = calLinePenalty(c, a, m2) + 
+			calLinePenalty(c, m2, b) + 
+			((grid[b.x][a.y] & csign[c]) ? cpenalty[b.x][a.y] : calpointpenalty(cell[b.x][a.y] + 1));
 
 		middle = m1;
 		ret = penalty1;
@@ -331,7 +336,7 @@ inline int ColorLinker::calLinePenalty(int c, point& a, point& b)
 
 		for(ret = 0, i = s + 1; i < e; i++)
 		{
-			ret += calpointpenalty(cell[a.x][i] + 1);//cpenalty[a.x][i];
+			ret += ((grid[a.x][i] & csign[c]) ? cpenalty[a.x][i] : calpointpenalty(cell[a.x][i] + 1));
 		}
 	}
 	else if(a.y == b.y)
@@ -341,7 +346,7 @@ inline int ColorLinker::calLinePenalty(int c, point& a, point& b)
 
 		for(ret = 0, i = s + 1; i < e; i++)
 		{
-			ret += calpointpenalty(cell[i][a.y] + 1);//cpenalty[i][a.y];
+			ret += ((grid[i][a.y] & csign[c]) ? cpenalty[i][a.y] : calpointpenalty(cell[i][a.y] + 1));
 		}
 	}
 	return ret;
