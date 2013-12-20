@@ -25,9 +25,9 @@ const int MAX_COLOR = 5;
 
 const int MAX_DIS = 10000;
 
-const int dx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
+const int dx[4] = {1, -1, 0, 0};
 
-const int dy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
+const int dy[4] = {0, 0, 1, -1};
 
 // csign[i] means that cell is painted with color i.
 const int csign[6] = {1, 2, 4, 8, 16, 32};
@@ -111,14 +111,20 @@ public:
 	// save the penalty which is inputted.
 	int penalty; 
 
-	// save the penalty score of this status.
-	long cpenalty; 
-
 	// process result
 	vector<int> ret; 
 
 	// visited array
 	bool visited[MAX][MAX];
+
+	// record the penalty of through this cell
+	int cpenalty[MAX][MAX];
+
+	// record the path which has the least penalty
+	int path[MAX][MAX];
+
+	// record how many cost it will be cost from one point to another
+	long cost[MAX][MAX];
 
 	// save the board status, if some cell(i,j) is painted by 1 and 3
 	// grid[i][j] = (2 ^ 1) | (2 ^ 3).
@@ -139,9 +145,6 @@ public:
 
 	// judge whether current point's top/left/bottom/right positions have same color points.
 	inline bool judge(int, int); 
-
-	// calculate the penalty of certain point.
-	inline int calpointpenalty(int, int);
 
 	// find the nearest point which has same color.
 	inline void find(int, int&, int&, const point&); 
@@ -178,7 +181,7 @@ public:
 
 	vector<int> link(vector <string>, int);
 
-	ColorLinker() : cnt(0), gridSize(0), penalty(0), cpenalty(0)
+	ColorLinker() : cnt(0), gridSize(0), penalty(0)
 	{ 
 		ret.clear();
 		grid.clear();
@@ -230,13 +233,6 @@ inline bool ColorLinker::judge(int x, int y)
 		}
 	}
 	return ret;
-}
-
-inline int ColorLinker::calpointpenalty(int x, int y)
-{
-	int k = cell[x][y];
-
-	return k + k * (k - 1) * penalty;
 }
 
 inline void ColorLinker::find(int color, int& fpx, int& fpy, const point& p)
@@ -295,8 +291,8 @@ inline int ColorLinker::calPenalty(point& a, point& middle, point& b)
 		point m1(a.x, b.y);
 		point m2(b.x, a.y);
 
-		int penalty1 = calLinePenalty(a, m1) + calLinePenalty(m1, b) + calpointpenalty(a.x, b.y);
-		int penalty2 = calLinePenalty(a, m2) + calLinePenalty(m2, b) + calpointpenalty(b.x, a.y);
+		int penalty1 = calLinePenalty(a, m1) + calLinePenalty(m1, b) + cpenalty[a.x][b.y];
+		int penalty2 = calLinePenalty(a, m2) + calLinePenalty(m2, b) + cpenalty[b.x][a.y];
 
 		middle = m1;
 		ret = penalty1;
@@ -327,7 +323,7 @@ inline int ColorLinker::calLinePenalty(point& a, point& b)
 
 		for(ret = 0, i = s + 1; i < e; i++)
 		{
-			ret += calpointpenalty(a.x, i);
+			ret += cpenalty[a.x][i];
 		}
 	}
 	else if(a.y == b.y)
@@ -337,7 +333,7 @@ inline int ColorLinker::calLinePenalty(point& a, point& b)
 
 		for(ret = 0, i = s + 1; i < e; i++)
 		{
-			ret += calpointpenalty(i, a.y);
+			ret += cpenalty[i][a.y];
 		}
 	}
 	return ret;
@@ -419,6 +415,10 @@ inline void ColorLinker::paint(int color, point& a, point& middle, point& b, com
 		cell[middle.x][middle.y] += 1;
 		statis[color].push_back(middle);
 
+		cpenalty[middle.x][middle.y] = 
+			cell[middle.x][middle.y] + 
+			cell[middle.x][middle.y] * (cell[middle.x][middle.y] - 1) * penalty;
+
 		cc.add(middle);
 
 		cnt += 3;
@@ -450,6 +450,10 @@ inline void ColorLinker::paintline(int color, point& a, point& b, component& cc)
 			cell[a.x][i] += 1;
 			statis[color].push_back(c);
 
+			cpenalty[a.x][i] = 
+				cell[a.x][i] + 
+				cell[a.x][i] * (cell[a.x][i] - 1) * penalty;
+
 			cc.add(c);
 
 			cnt += 3;
@@ -469,6 +473,10 @@ inline void ColorLinker::paintline(int color, point& a, point& b, component& cc)
 			grid[i][a.y] |= csign[color];
 			cell[i][a.y] += 1;
 			statis[color].push_back(c);
+
+			cpenalty[i][a.y] = 
+				cell[i][a.y] + 
+				cell[i][a.y] * (cell[i][a.y] - 1) * penalty;
 
 			cc.add(c);
 
@@ -554,7 +562,9 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 	int c = 0;
 	
 	penalty = ipenalty;
-	gridSize = board.size();		
+	gridSize = board.size();
+
+	memset(cpenalty, 0, sizeof(cpenalty));
 
 	for(i = 0; i < gridSize; i++)
 	{
@@ -575,6 +585,10 @@ vector<int> ColorLinker::link(vector<string> board, int ipenalty)
 				statis[c].push_back(point(i, j));
 				row[j] |= csign[c];
 				val[j] = 1;
+
+				cpenalty[i][j] = 
+					val[j] + 
+					val[j] * (val[j] - 1) * penalty;
 			}
 		}
 		grid.push_back(row);
