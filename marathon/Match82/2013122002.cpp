@@ -161,11 +161,11 @@ public:
 
 	// calculate the penalty from one point a to another b
 	// there is a middle point c, if c(-1, -1) a and b are co-linear.
-	inline int calPenalty(point&, point&, point&);
+	inline int calPenalty(int, point&, point&, point&);
 
 	// calculate the penalty from a to b
 	// a and b are co-linear.
-	inline int calLinePenalty(point&, point&);
+	inline int calLinePenalty(int, point&, point&);
 
 	// find nearest distance between two connected-components.
 	inline int calCcDis(point&, point&, point&, component&, component&);
@@ -290,7 +290,7 @@ inline void ColorLinker::mergecc(component& c1, component& c2)
 	}
 }
 
-inline int ColorLinker::calPenalty(point& a, point& middle, point& b)
+inline int ColorLinker::calPenalty(int c, point& a, point& middle, point& b)
 {
 	int ret = 0;
 
@@ -299,8 +299,8 @@ inline int ColorLinker::calPenalty(point& a, point& middle, point& b)
 		point m1(a.x, b.y);
 		point m2(b.x, a.y);
 
-		int penalty1 = calLinePenalty(a, m1) + calLinePenalty(m1, b) + calpointpenalty(cell[a.x][b.y] + 1);//cpenalty[a.x][b.y];
-		int penalty2 = calLinePenalty(a, m2) + calLinePenalty(m2, b) + calpointpenalty(cell[b.x][a.y] + 1);//cpenalty[b.x][a.y];
+		int penalty1 = calLinePenalty(c, a, m1) + calLinePenalty(c, m1, b) + ((grid[a.x][b.y] & csign[c]) ? cpenalty[a.x][b.y] : calpointpenalty(cell[a.x][b.y] + 1));//;
+		int penalty2 = calLinePenalty(c, a, m2) + calLinePenalty(c, m2, b) + calpointpenalty(cell[b.x][a.y] + 1);//cpenalty[b.x][a.y];
 
 		middle = m1;
 		ret = penalty1;
@@ -313,12 +313,12 @@ inline int ColorLinker::calPenalty(point& a, point& middle, point& b)
 	else
 	{
 		middle = point(-1, -1);
-		ret = calLinePenalty(a, b);
+		ret = calLinePenalty(c, a, b);
 	}
 	return ret;
 }
 
-inline int ColorLinker::calLinePenalty(point& a, point& b)
+inline int ColorLinker::calLinePenalty(int c, point& a, point& b)
 {
 	int i = 0;
 	int s = 0, e = 0;
@@ -358,7 +358,7 @@ inline int ColorLinker::calCcDis(point& p1, point& middle, point& p2, component&
 	{
 		for(j = 0; j < int(c2.points.size()); j++)
 		{
-			tmpDis = calPenalty(c1.points[i], tmiddle, c2.points[j]);
+			tmpDis = calPenalty(c1.color, c1.points[i], tmiddle, c2.points[j]);
 			if(tmpDis < minDis)
 			{
 				minDis = tmpDis;
