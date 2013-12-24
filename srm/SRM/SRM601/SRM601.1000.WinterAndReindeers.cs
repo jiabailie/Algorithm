@@ -89,8 +89,7 @@ public class WinterAndReindeers
                 foreach (KeyValuePair<int, int> bkvp in bpos)
                 {
                     k = dp[akvp.Key, bkvp.Key];
-
-                    if (akvp.Value != a.Length && bkvp.Value != b.Length)
+                    if (akvp.Value <= a.Length && bkvp.Value <= b.Length)
                     {
                         k += l - dp[akvp.Value, bkvp.Value];
                     }
