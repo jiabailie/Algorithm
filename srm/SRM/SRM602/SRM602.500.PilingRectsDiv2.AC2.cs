@@ -4,48 +4,33 @@ using System.Text;
 
 public class PilingRectsDiv2
 {
-    private int n = 0;
-    private int[] gx = new int[210];
-    private int[] gy = new int[210];
-    private int calc(int x, int y)
-    {
-        int ret = 0;
-        for (int i = 0; i < n; i++)
-        {
-            if ((x <= gx[i] && y <= gy[i]) || (x <= gy[i] && y <= gx[i]))
-            {
-                ret++;
-            }
-        }
-        return ret;
-    }
-    public int getmax(int[] X, int[] Y, int limit)
-    {
-        n = X.Length;
-        int max = -1;
-        int i = 0, j = 0, k = 0;
+	public int getmax(int[] X, int[] Y, int limit)
+	{
+		int i = 0, j = 0, k = 0;
+		int ret = -1, tmp = 0, n = X.Length;
 
-        for (i = 0; i < n; i++)
-        {
-            gx[i] = X[i];
-            gy[i] = Y[i];
-        }
+		for (i = 1; i <= 200; i++)
+		{
+			for (j = 1; j <= 200; j++)
+			{
+				if (i * j >= limit)
+				{
+					tmp = 0;
+					for (k = 0; k < n; k++)
+					{
+						if ((X[k] >= i && Y[k] >= j) || (X[k] >= j && Y[k] >= i))
+						{
+							tmp += 1;
+						}
+					}
 
-        for (i = 1; i <= 200; i++)
-        {
-            for (j = 1; j <= 200; j++)
-            {
-                k = calc(i, j);
-                if (i * j >= limit)
-                {
-                    if (k > 0 && k > max)
-                    {
-                        max = k;
-                    }
-                }
-            }
-        }
-
-        return max;
-    }
+					if (tmp > 0 && tmp > ret)
+					{
+						ret = tmp;
+					}
+				}
+			}
+		}
+		return ret;
+	}
 }
