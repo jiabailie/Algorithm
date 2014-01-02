@@ -1,3 +1,6 @@
+/* I misunderstood the title, and did this file, I ignored the 'rotate' codition.
+ * But this code segment is uding a tree like data structure to find the maximum result.
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
