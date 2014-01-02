@@ -22,7 +22,6 @@ public class PilingRectsDiv2
         for (i = 0; i < n; i++)
         {
             if (visit[i]) { continue; }
-
             if (X[i] * Y[i] >= limit)
             {
                 mx[m] = X[i] <= Y[i] ? X[i] : Y[i];
@@ -30,7 +29,6 @@ public class PilingRectsDiv2
                 ct[m] = 1;
 
                 visit[i] = true;
-
                 for (j = i + 1; j < n; j++)
                 {
                     if (visit[j]) { continue; }
