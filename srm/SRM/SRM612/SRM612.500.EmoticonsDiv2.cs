@@ -7,6 +7,7 @@ public class EmoticonsDiv2
 
     private void step(int clipboard, int ops, int window)
     {
+        if (ops >= p) { return; }
         if (window >= Smiles)
         {
             if (window == Smiles)
