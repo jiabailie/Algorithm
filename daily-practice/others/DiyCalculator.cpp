@@ -4,20 +4,27 @@
 #include <cstdio>
 #include <iostream>
 #include <vector>
-#include <map>
 #include <string>
+#include <stack>
 #define DEBUG
 
 using namespace std;
 
-// 0 correct
-// 1 invalid expression
-// 2 0 as divisior
-int ERROR_FLAG = 0;
+enum ERROR
+{
+    VALID_EXPRESSION = 0,
+    ZERO_IS_DIVISOR,
+    MISMATCHED_PARENTHESES,
+    REDUNDANT_ELEMENTS
+};
 
-char separator[] = {'{', '}', '(', ')', '+', '-', '*', '/'};
-char levels[4][2] = {{'+', '-'}, {'*', '/'}, {'(', ')'}, {'{', '}'}};
+const char separator[] = {'(', ')', '+', '-', '*', '/'};
 
+const char levels[3][2] = {{'+', '-'}, {'*', '/'}, {'(', ')'}};
+
+ERROR ERROR_FLAG = VALID_EXPRESSION;
+
+/* Judge whether the character is a separator or not. */
 inline bool IsSeparator(char c)
 {
     for(int i = 0; i < sizeof(separator); ++i)
@@ -30,10 +37,11 @@ inline bool IsSeparator(char c)
     return false;
 }
 
+/* If the character is a separator, getting the priority level of this separator. */
 inline int GetSeparatorLevel(char c)
 {
     int i = 0, j = 0, k = -1;
-    for(i = 0; i < 4 && k == -1; ++i)
+    for(i = 0; i < 3 && k == -1; ++i)
     {
         for(j = 0; j < 2 && k == -1; ++j)
         {
@@ -46,7 +54,187 @@ inline int GetSeparatorLevel(char c)
     return k;
 }
 
-void Parsor(const char *expression, vector<string> &elems, vector<int> &priority)
+/**
+ * Check whether the parentheses are valid.
+ * eg. CheckParentheses('(', ')', s)
+ */
+inline bool CheckParentheses(char pre, char pos, stack<char> &series)
+{
+    stack<char> temp;
+
+    if(series.size() % 2 == 1)
+    {
+        return false;
+    }
+
+    while(true)
+    {
+        while(!series.empty() && !temp.empty() && series.top() == pre && temp.top() == pos)
+        {
+            series.pop();
+            temp.pop();
+        }    
+        if(!temp.empty() && temp.top() == pre)
+        {
+            return false;
+        }
+        if(!series.empty())
+        {
+            temp.push(series.top());
+            series.pop();
+        }
+        if(series.empty())
+        {
+            if(temp.empty())
+            {
+                break;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/* Transfer the infix expression into suffix expression, in order to do calculation. */
+inline void Transfer2SuffixExpression(vector<string> &elems, vector<int> &priority, vector<string> &suffixExpr)
+{
+    stack<char> oper;
+
+    int i = 0, len = int(elems.size());
+
+    for(i = 0; i < len; ++i)
+    {
+        // numbers
+        if(priority[i] == -1)
+        {
+            suffixExpr.push_back(string(elems[i].begin(), elems[i].end()));
+        }
+        // '+', '-', '*' and '/'
+        else if(priority[i] == 0 || priority[i] == 1)
+        {
+            while(!oper.empty() && GetSeparatorLevel(oper.top()) != 2 && priority[i] <= GetSeparatorLevel(oper.top()))
+            {
+                suffixExpr.push_back(string(1, oper.top()));
+                oper.pop();
+            }
+            oper.push(elems[i][0]);
+        }
+        // '(' and ')'
+        else if(priority[i] == 2)
+        {
+            if(elems[i][0] == '(')
+            {
+                oper.push('(');
+            }
+            else if(elems[i][0] == ')')
+            {
+                while(oper.top() != '(')
+                {
+                    suffixExpr.push_back(string(1, oper.top()));
+                    oper.pop();
+                }
+                oper.pop();
+            }
+        }
+    }
+
+    while(!oper.empty())
+    {
+        suffixExpr.push_back(string(1, oper.top()));
+        oper.pop();
+    }
+}
+
+/* Calculate the suffix expression. */
+inline int CalculateSuffixExpression(const vector<string> &suffixExpr)
+{
+    int pos = 0;
+    int pre = 0;
+    int res = 0;
+    stack<int> calc;
+    for(vector<string>::const_iterator it = suffixExpr.begin(); it != suffixExpr.end(); ++it)
+    {
+        string tmp((*it).begin(), (*it).end());
+        if(tmp[0] == '+' || tmp[0] == '-' || tmp[0] == '*' || tmp[0] == '/')
+        {
+            if(calc.size() < 2)
+            {
+                ERROR_FLAG = REDUNDANT_ELEMENTS;
+                return -1;
+            }
+            pos = calc.top();
+            calc.pop();
+            pre = calc.top();
+            calc.pop();
+            if(tmp[0] == '/' && pos == 0)
+            {
+                ERROR_FLAG = ZERO_IS_DIVISOR;
+                return -1;
+            }
+            switch(tmp[0])
+            {
+            case '+':
+                res = pre + pos;
+                break;
+            case '-':
+                res = pre - pos;
+                break;
+            case '*':
+                res = pre * pos;
+                break;
+            case '/':
+                res = pre / pos;
+                break;
+            default:
+                break;
+            }
+            calc.push(res);
+        }
+        else
+        {
+            calc.push(atoi(tmp.c_str()));
+        }
+    }
+    if(calc.size() > 1)
+    {
+        ERROR_FLAG = REDUNDANT_ELEMENTS;
+        return -1;
+    }
+    return calc.top();
+}
+
+/* Analysis the elements of this level. */
+inline int CalLevel(vector<string> &elems, vector<int> &priority)
+{
+    stack<char> level2;
+    vector<string> suffixExpr;
+
+    for(int i = 0; i < int(elems.size()); ++i)
+    {
+        if(priority[i] == 2)
+        {
+            level2.push(elems[i][0]);
+        }
+    }
+
+    if(level2.size() > 0 && !CheckParentheses('(', ')', level2))
+    {
+        ERROR_FLAG = MISMATCHED_PARENTHESES;
+        return -1;
+    }
+
+    Transfer2SuffixExpression(elems, priority, suffixExpr);
+
+    int res = CalculateSuffixExpression(suffixExpr);
+
+    return res;
+}
+
+/* Separating the input expression as a series of numbers of operators. */
+inline void Parsor(const char *expression, vector<string> &elems, vector<int> &priority)
 {
     int i = 0;
     int len = strlen(expression);
@@ -78,38 +266,76 @@ void Parsor(const char *expression, vector<string> &elems, vector<int> &priority
     }
 }
 
-void CalLevel(int mlevel, vector<string> &elems, vector<int> &priority)
+/* Calculate the expression. */
+inline int Cal(const char *expression)
 {
-
-}
-
-int Cal(const char *expression)
-{
-    int mlevel = -1;
     vector<string> elems;
     vector<int> priority;
 
     Parsor(expression, elems, priority);
 
-    for(vector<int>::iterator it = priority.begin(); it != priority.end(); it++)
-    {
-        if((*it) > mlevel)
-        {
-            mlevel = *it;
-        }
-    }
+    int res = CalLevel(elems, priority);
 
-    return 0;
+    if(ERROR_FLAG != VALID_EXPRESSION)
+    {
+        return -1;
+    }
+    return res;
+}
+
+/* Test whether the function CheckParentheses() is correct. */
+void TestCheckParentheses()
+{
+    char t[6][100] = {"((()))()()", "(", "))()((", ")()()()", "((()()()))", "(()()())"}; 
+    for(int i = 0; i < 6; ++i)
+    {        
+        stack<char> istack;
+        for(int j = 0; j < int(strlen(t[i])); ++j)
+        {
+            istack.push(t[i][j]);
+        }
+        cout << "#" << i << ":" << t[i] << endl;
+        cout << (CheckParentheses(levels[2][0], levels[2][1], istack) ? 1 : 0) << endl << endl;
+    }
 }
 
 int main()
 {
-    string line("(1 + 2 * 5) * 3 - (902 - 89 * 2) * 5 + 6 * (9 + 1 * 2) + 9");
+#ifdef DEBUG
+    string line("9 + (1 + 2 * 5) * 3 - 2 * (902 - 89 * 2) * 5 + 6 * (9 + 1 * 2) + 9");
+
+    int expected = 9 + (1 + 2 * 5) * 3 - 2 * (902 - 89 * 2) * 5 + 6 * (9 + 1 * 2) + 9;
+#else
+    string line;
+#endif
+
 #ifndef DEBUG
     while(getline(cin, line), line.size() > 0)
     {
 #endif
+        ERROR_FLAG = VALID_EXPRESSION;
+
         int f = Cal(line.c_str());
+
+        if(ERROR_FLAG != VALID_EXPRESSION)
+        {
+            switch(ERROR_FLAG)
+            {
+            case ZERO_IS_DIVISOR:
+                cout << "0 can't be used as divisors." << endl;
+                break;
+            case MISMATCHED_PARENTHESES:
+                cout << "There are mismatched parentheses." << endl;
+                break;
+            case REDUNDANT_ELEMENTS:
+                cout << "There are some redundant elements." << endl;
+                break;
+            default:
+                break;
+            }
+
+            return 0;
+        }
 #ifndef DEBUG
     }
 #endif
