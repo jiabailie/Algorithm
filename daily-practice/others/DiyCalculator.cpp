@@ -15,7 +15,8 @@ enum ERROR
     VALID_EXPRESSION = 0,
     ZERO_IS_DIVISOR,
     MISMATCHED_PARENTHESES,
-    REDUNDANT_ELEMENTS
+    REDUNDANT_ELEMENTS,
+    CALCULATE_OVERFLOW
 };
 
 const char separator[] = {'(', ')', '+', '-', '*', '/'};
@@ -169,28 +170,38 @@ inline int CalculateSuffixExpression(const vector<string> &suffixExpr)
             calc.pop();
             pre = calc.top();
             calc.pop();
-            if(tmp[0] == '/' && pos == 0)
+            if(tmp[0] == '/')
             {
-                ERROR_FLAG = ZERO_IS_DIVISOR;
-                return -1;
-            }
-            switch(tmp[0])
-            {
-            case '+':
-                res = pre + pos;
-                break;
-            case '-':
-                res = pre - pos;
-                break;
-            case '*':
-                res = pre * pos;
-                break;
-            case '/':
+                if(pos == 0)
+                {
+                    ERROR_FLAG = ZERO_IS_DIVISOR;
+                    return -1;
+                }
                 res = pre / pos;
-                break;
-            default:
-                break;
             }
+            else if(tmp[0] == '*')
+            {
+                res = pre * pos;
+                if(res != 0 && res / pre != pos)
+                {
+                    ERROR_FLAG = CALCULATE_OVERFLOW;
+                    return -1;
+                }
+            }
+            else if(tmp[0] == '+')
+            {
+                res = pre + pos;
+                if((pre > 0 && pos > 0 && res < 0) || (pre < 0 && pos < 0 && res > 0))
+                {
+                    ERROR_FLAG = CALCULATE_OVERFLOW;
+                    return -1;
+                }
+            }
+            else if(tmp[0] == '-')
+            {
+                res = pre - pos;
+            }
+
             calc.push(res);
         }
         else
@@ -246,6 +257,11 @@ inline void Parsor(const char *expression, vector<string> &elems, vector<int> &p
         {
             if(expression[i] != ' ')
             {
+                if(expression[i] == '-' && (priority.empty() || priority.back() != -1))
+                {
+                    elems.push_back("0");
+                    priority.push_back(-1);
+                }
                 elems.push_back(string(1, expression[i]));
                 priority.push_back(GetSeparatorLevel(expression[i]));
             }
@@ -302,9 +318,9 @@ void TestCheckParentheses()
 int main()
 {
 #ifdef DEBUG
-    string line("9 + (1 + 2 * 5) * 3 - 2 * (902 - 89 * 2) * 5 + 6 * (9 + 1 * 2) + 9");
+    string line("-9 + (1 + 2 * 5) * 3 - (-1) * 2 * (902 - 89 * 2) * 5 + 6 * (9 + 1 * 2) + 9");
 
-    int expected = 9 + (1 + 2 * 5) * 3 - 2 * (902 - 89 * 2) * 5 + 6 * (9 + 1 * 2) + 9;
+    int expected = -9 + (1 + 2 * 5) * 3 - (-1) * 2 * (902 - 89 * 2) * 5 + 6 * (9 + 1 * 2) + 9;
 #else
     string line;
 #endif
@@ -329,6 +345,9 @@ int main()
                 break;
             case REDUNDANT_ELEMENTS:
                 cout << "There are some redundant elements." << endl;
+                break;
+            case CALCULATE_OVERFLOW:
+                cout << "The calculation is over flow." << endl;
                 break;
             default:
                 break;
