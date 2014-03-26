@@ -23,9 +23,20 @@ VM* newVM()
 }
 
 /* Push a variable into vm's stack. */
-void push(VM *vm, Object *value)
+void push(int test, VM *vm, Object *value)
 {
-    assert(vm->stackSize < STACK_MAX, "Stack overflow!");
+    if(test >= TEST_MAX)
+    {
+        assert(vm->stackSize < STACK_MAX, "Stack overflow!");
+    }
+
+    if(vm->stackSize >= STACK_MAX)
+    {
+        gc(vm);
+        push(test + 1, vm, value);
+
+        return;
+    }    
 
     vm->stack[vm->stackSize] = value;
     vm->stackSize += 1;
@@ -64,7 +75,7 @@ void pushInt(VM *vm, int intValue)
     Object* object = newObject(vm, OBJ_INT);
     object->value = intValue;
 
-    push(vm, object);
+    push(0, vm, object);
 }
 
 Object* pushPair(VM *vm)
@@ -73,7 +84,7 @@ Object* pushPair(VM *vm)
     object->tail = pop(vm);
     object->head = pop(vm);
 
-    push(vm, object);
+    push(0, vm, object);
     return object;
 }
 
@@ -108,6 +119,11 @@ void sweep(VM *vm)
     Object *unreached = 0;
     Object **object = &vm->firstObject;
 
+    if(!(*object))
+    {
+        return;
+    }
+
     /* Sweep from the linklist head. */
     while(!(*object)->marked)
     {
@@ -119,9 +135,13 @@ void sweep(VM *vm)
         vm->numObjects -= 1;
 
         unreached = 0;
+        if(!(*object))
+        {
+            break;
+        }
     }
 
-    while(*object)
+    while((*object) && (*object)->next)
     {
         if(!(*object)->next->marked)
         {
@@ -144,17 +164,32 @@ void sweep(VM *vm)
 
 void gc(VM *vm)
 {
+    std::cout << "Do garbage collection..." << std::endl;
+    std::cout << "Currently, there are " << vm->numObjects << " objects in the stack."<< std::endl;
+
     int numberObjects = vm->numObjects;
 
     markAll(vm);
     sweep(vm);
 
     vm->maxObjects = numberObjects << 1;
+
+    std::cout << "Garbage collection completed." << std::endl;
+    std::cout << "Currently, there are " << vm->numObjects << " objects in the stack."<< std::endl;
 }
 
 int main()
 {
-    std::cout << sizeof(ObjectType) << std::endl;
-    std::cout << sizeof(Object) << std::endl;
+    VM *vm = newVM();
+
+    for(int i = 0; i < 500; ++i)
+    {
+        Object *object = newObject(vm, OBJ_INT);
+        pushInt(vm, i);
+        if(i & 1)
+        {
+            pop(vm);
+        }
+    }
     return 0;
 }

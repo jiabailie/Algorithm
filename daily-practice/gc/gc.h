@@ -2,10 +2,13 @@
 #define __GC_H
 
 /* The maximum stack size. */
-const int STACK_MAX = 256;
+const int STACK_MAX = 1024;
+
+/* The maximum test times. */
+const int TEST_MAX = 10;
 
 /* The initial threshold to do gc. */
-const int INITIAL_GC_THRESHOLD = 100;
+const int INITIAL_GC_THRESHOLD = 200;
 
 typedef enum
 {
@@ -53,7 +56,7 @@ struct VM
 VM* newVM();
 
 /* Push a variable into vm's stack. */
-void push(VM*, Object *);
+void push(int, VM*, Object *);
 
 /* Pop out a variable from vm's stack. */
 Object* pop(VM*);
