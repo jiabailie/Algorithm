@@ -23,9 +23,9 @@ VM* newVM()
 }
 
 /* Push a variable into vm's stack. */
-void push(int test, VM *vm, Object *value)
+void push(bool test, VM *vm, Object *value)
 {
-    if(test >= TEST_MAX)
+    if(test)
     {
         assert(vm->stackSize < STACK_MAX, "Stack overflow!");
     }
@@ -33,7 +33,7 @@ void push(int test, VM *vm, Object *value)
     if(vm->stackSize >= STACK_MAX)
     {
         gc(vm);
-        push(test + 1, vm, value);
+        push(!test, vm, value);
 
         return;
     }    
