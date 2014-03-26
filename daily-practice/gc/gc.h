@@ -56,7 +56,7 @@ struct VM
 VM* newVM();
 
 /* Push a variable into vm's stack. */
-void push(int, VM*, Object *);
+void push(int, VM*, Object*);
 
 /* Pop out a variable from vm's stack. */
 Object* pop(VM*);
