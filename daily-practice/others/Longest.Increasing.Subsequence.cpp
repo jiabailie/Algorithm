@@ -12,7 +12,7 @@
 #define DEBUG
 #undef  DEBUG
 
-const int len = 19797;
+const int len = 20000;
 
 int dp[len];
 char str[len];
