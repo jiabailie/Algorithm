@@ -87,6 +87,7 @@ inline int solve2()
 
 /* O(k * n), here is O(26 * n). */
 /* tail[i] = max length{ sub-strings which use char(i) as its tail. } */
+/* dp[i] = max{ tail[i], i = 0, ..., str[i]. } + 1 */
 inline int solve3()
 {
     int i = 0, j = 0;
