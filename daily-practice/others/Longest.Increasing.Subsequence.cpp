@@ -12,7 +12,7 @@
 #define DEBUG
 #undef  DEBUG
 
-const int len = 19797;
+const int len = 20000;
 
 int dp[len];
 char str[len];
@@ -133,6 +133,7 @@ int main()
 
     std::cout << std::string(str, str + len).c_str() << std::endl;
 
+    // Test solution 1.
     DWORD start_time = GetTickCount();
 
     std::cout << "solve 1 = " << solve1() << std::endl;
@@ -143,6 +144,7 @@ int main()
 
     std::cout << std::endl;
 
+    // Test solution 2.
     start_time = GetTickCount();
 
     std::cout << "solve 2 = " << solve2() << std::endl;
@@ -153,6 +155,7 @@ int main()
 
     std::cout << std::endl;
 
+    // Test solution 3.
     start_time = GetTickCount();
 
     std::cout << "solve 3 = " << solve3() << std::endl;
@@ -161,6 +164,7 @@ int main()
 
     t3 = end_time - start_time;
 
+    // Output their execution times.
     std::cout << t1 << " " << t2 << " " << t3 << std::endl;
 
     return 0;
