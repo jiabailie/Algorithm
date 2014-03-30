@@ -86,41 +86,39 @@ inline int solve2()
 }
 
 /* O(k * n), here is O(26 * n). */
-/* tail[i] = max length{ sub-strings which use char(i) as its tail. } */
-/* dp[i] = max{ tail[i], i = 0, ..., str[i]. } + 1 */
+/* tail[i] = max length{ sub-strings which use char(i) as their tail. } */
+/* k = max{ tail[i], i = 0, ..., str[i]. } + 1 */
 inline int solve3()
 {
     int i = 0, j = 0;
-
+    int k = 0;
     int tail[26];
 
-    memset(dp, 0, sizeof(dp));
     memset(tail, 0, sizeof(tail));
 
-    dp[0] = 1;
     tail[int(str[0] - 'a')] = 1;
 
     for(i = 1; i < len; ++i)
     {
-        dp[i] = 1;
+        k = 1;
 
         for(j = 0; j <= int(str[i] - 'a'); ++j)
         {
-            if(tail[j] + 1 > dp[i])
+            if(tail[j] + 1 > k)
             {
-                dp[i] = tail[j] + 1;
+                k = tail[j] + 1;
             }
         }
 
-        if(dp[i] > tail[int(str[i] - 'a')])
+        if(k > tail[int(str[i] - 'a')])
         {
-            tail[int(str[i] - 'a')] = dp[i];
+            tail[int(str[i] - 'a')] = k;
         }
     }
 
     display();
 
-    return dp[len - 1];
+    return k;
 }
 
 int main()
