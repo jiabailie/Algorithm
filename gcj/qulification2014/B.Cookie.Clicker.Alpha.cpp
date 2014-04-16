@@ -20,7 +20,7 @@ double solve()
 {
 	vector<double> stime;
 	int i = 0;
-	int maxN = 50000;
+	int maxN = 100000;
 	stime.push_back(x / 2);
 	double cost = 0;
 	for(i = 1; i <= maxN; ++i)
