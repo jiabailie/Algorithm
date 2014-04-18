@@ -21,6 +21,19 @@ vector<int> triples[4];
 
 int iboard[16][16];
 
+struct neighbour
+{
+	int x;
+	int y;
+	int dist;
+	int dir;
+	neighbour() {}
+	neighbour(int _x, int _y) : dist(-1), dir(-1) {}
+	neighbour(int _x, int _y, int _dist, int _dir) : x(_x), y(_y), dist(_dist), dir(_dir) {}
+};
+
+vector<vector<neighbour> > nbs;
+
 inline int setPos(int x, int y)
 {
 	return x * N + y;
@@ -44,6 +57,8 @@ private:
 	bool lbTriple(int, int);
 
 	bool judgeTriple(int, int, int[3]);
+
+	neighbour findNearestNeighbour(int, int);
 
 	void calColor(int, int, vector<int>&);
 
@@ -97,6 +112,32 @@ bool SquareRemover::judgeTriple(int x, int y, int dirs[3])
 		return false;
 	}
 	return true;
+}
+
+neighbour SquareRemover::findNearestNeighbour(int x, int y)
+{
+	bool find = false;
+	int i = 0, j = 0;
+	int tx = 0, ty = 0;
+
+	neighbour ret(x, y);
+
+	for(i = 1; i <= N && !find; ++i)
+	{
+		for(j = 0; j < 4 && !find; ++j)
+		{
+			tx = x + i * dirX[j];
+			ty = y + i * dirY[j];
+
+			if(tx >= 0 && tx < N && ty >= 0 && ty < N && iboard[x][y] == iboard[tx][ty])
+			{
+				ret.dist = i;
+				ret.dir = j;
+				find = true;
+			}
+		}
+	}
+	return find;
 }
 
 void SquareRemover::calColor(int colors, int startSeed, vector<int> &color)
