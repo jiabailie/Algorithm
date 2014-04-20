@@ -4,6 +4,7 @@
 #include <iostream>
 #include <set>
 #define DEBUG
+#undef  DEBUG
 using namespace std;
 
 typedef long long ll;
@@ -27,6 +28,10 @@ struct idir
         rb = 7 
     };
 };
+
+// rel[0] => Minus = N;
+// rel[1] => Minus = 1.
+const int rel[2][2][4] = {{{0, 0, 3, 3}, {1, 2, 1, 3}}, {{0, 0, 1, 1}, {2, 3, 2, 3}}};
 
 int N = 0;
 int iboard[16][16];
@@ -68,9 +73,12 @@ inline void getPos(int p, int &x, int &y) { x = p / N; y = p % N; }
 
 class SquareRemover
 {
-private:
+private:    
+    int lt_x;
+    int lt_y;
+    int rb_x;
+    int rb_y;
     int _colors;
-
     ll _cur_color;
 
     bool rbTriple(int x, int y)
@@ -188,6 +196,97 @@ private:
         return ret;
     }
 
+    void setDirValue(int kind, int x, int y, int &nx, int &ny)
+    {
+        switch(kind)
+        {
+        case idir::up:
+            nx = x - 1;
+            ny = y;
+            break;
+        case idir::left:
+            nx = x;
+            ny = y - 1;
+            break;
+        case idir::down:
+            nx = x + 1;
+            ny = y;
+            break;
+        case idir::right:
+            nx = x;
+            ny = y + 1;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void setRetValue(int x, int y, int d, int &pos, int &dir, int &col)
+    {
+        dir = d;
+        pos = setPos(x, y);        
+        col = iboard[x][y];
+    }
+
+    void formPos(int x, int y, int d, int &ind)
+    {
+        ind = setPos(x + dirX[d], y + dirY[d]);
+    }
+
+    int getNeighboursColor(int kind, int ind, 
+        int &nbPos1, int &nbDir1, int &nbCol1, 
+        int &nbPos2, int &nbDir2, int &nbCol2)
+    {
+        int ret = 0;
+        int x = 0, y = 0;
+        int x1 = 0, y1 = 0, d1 = 0;
+        int x2 = 0, y2 = 0, d2 = 0;
+        getPos(ind, x, y);
+
+        switch(kind)
+        {
+        case 0:
+            d1 = idir::right;
+            d2 = idir::down;
+            break;
+        case 1:
+            d1 = idir::up;
+            d2 = idir::right;
+            break;
+        case 2:
+            d1 = idir::up;
+            d2 = idir::left;
+            break;
+        case 3:
+            d1 = idir::left;
+            d2 = idir::down;
+            break;
+        default:
+            break;
+        }
+        setDirValue(d1, x, y, x1, y1);
+        setDirValue(d2, x, y, x2, y2);
+        if(x1 >= 0 && x1 < N && y1 >= 0 && y1 < N)
+        {
+            ret += 1;
+            setRetValue(x1, y1, d1, nbPos1, nbDir1, nbCol1);
+        }
+        if(x2 >= 0 && x2 < N && y2 >= 0 && y2 < N)
+        {
+            ret += 1;
+            if(ret == 2)
+            {            
+                setRetValue(x2, y2, d2, nbPos2, nbDir2, nbCol2);
+            }
+            else if(ret == 1)
+            {
+                setRetValue(x2, y2, d2, nbPos1, nbDir1, nbCol1);
+            }
+        }
+
+        return ret;
+    }
+
     void generateNeighbours(int sX, int sY, int eX, int eY)
     {
         handleRange(sX, sY, eX, eY);
@@ -236,50 +335,151 @@ private:
         }
     }
 
+    void doCompare(int relIndex, int k1, int k2, int i1, int i2, int id, bool &find, int &d, int &kind1, int &kind2, int &ind1, int &ind2)
+    {
+        for(int i = 0; i < 4 && !find; ++i)
+        {
+            if(k1 == rel[relIndex][0][i] && k2 == rel[relIndex][1][i])
+            {
+                find = true;
+                kind1 = k1;
+                kind2 = k2;
+                ind1 = i1;
+                ind2 = i2;
+                d = id;
+            }
+        }
+    }
+
+    void swapColor(int ind1, int ind2)
+    {
+        int c = 0;
+        int x1 = 0, y1 = 0;
+        int x2 = 0, y2 = 0;
+
+        getPos(ind1, x1, x2);
+        getPos(ind2, x2, y2);
+
+        c = iboard[x1][y1];
+        iboard[x1][y1] = iboard[x2][y2];
+        iboard[x2][y2] = c;
+
+        lt_x = imax(0, x1 - 1);
+        lt_y = imax(0, y1 - 1);
+        rb_x = imin(N - 1, x2 + 1);
+        rb_y = imin(N - 1, y2 + 1);
+    }
+
+    // d[dir] means ind2 is at which direction of ind1
     bool findMatchTriples(int &d, int &kind1, int &ind1, int &kind2, int &ind2)
     {
         bool find = false;
-        int i = 0, j = 0, k = 0;
+        int i = 0, j = 0;
+        int k = 0, z = 0;
         set<int>::iterator m, n;
-        for(i = 0; i < 3 && !find; ++i)
+        for(i = 0; i < 4 && !find; ++i)
         {
-            for(j = i + 1; j < 4 && !find; ++j)
+            for(j = 0; j < 4 && !find; ++j)
             {
+                if(i == j) { continue; }
                 for(m = triples[i].begin(); m != triples[i].end() && !find; ++m)
                 {
                     for(n = triples[j].begin(); n != triples[j].end() && !find; ++n)
                     {
-                        k = iabs(*m, *n);
-                        if(k == 1 || k == N)
+                        k = (*m) - (*n);
+                        if(k != 1 && k != N) { continue; }
+                        if(iboard[(*m) / N][(*m) % N] != getNeighbourColor(j, *n) || 
+                           iboard[(*n) / N][(*n) % N] != getNeighbourColor(i, *m))
                         {
-                            if(iboard[(*m) / N][(*m) % N] == getNeighbourColor(j, *n) && 
-                               iboard[(*n) / N][(*n) % N] == getNeighbourColor(i, *m))
-                            {
-                                find = true;
-                                kind1 = i;
-                                kind2 = j;
-                                ind1 = *m;
-                                ind2 = *n;
-                            }
-                        }
+                            continue;
+                        }                        
+                        doCompare((k == N ? 0 : 1), i, j, *m, *n, (k == N ? idir::down : idir::right), find, d, kind1, kind2, ind1, ind2);
                     }
                 }
             }
         }
+        if(find)
+        {
+            triples[kind1].erase(ind1);
+            triples[kind2].erase(ind2);
+        }
         return find;
+    }
+
+    bool findRemovableTriple(int &d, int &kind, int &ind)
+    {
+        bool find = false;
+        int ncolor = 0;
+        int i = 0, k = 0;
+        set<int>::iterator j;
+        int nbPos1 = -1, nbDir1 = -1, nbCol1 = -1;
+        int nbPos2 = -1, nbDir2 = -1, nbCol2 = -1;
+
+        for(i = 0; i < 4 && !find; ++i)
+        {
+            for(j = triples[i].begin(); j != triples[i].end() && !find; ++j)
+            {
+                ncolor = getNeighbourColor(i, *j);
+                k = getNeighboursColor(i, *j, nbPos1, nbDir1, nbCol1, nbPos2, nbDir2, nbCol2);
+                if(k > 0)
+                {
+                    if(ncolor == nbCol1)
+                    {
+                        find = true;
+                        d = nbDir1;
+                        kind = i;
+                        ind = *j;
+                    }
+                    if(!find && k == 2 && ncolor == nbCol2)
+                    {
+                        find = true;
+                        d = nbDir2;
+                        kind = i;
+                        ind = *j;
+                    }
+                }
+            }
+        }
+        if(find)
+        {
+            triples[kind].erase(ind);
+        }
+        return find;
+    }
+
+    void loopControlTail(int ind1, int ind2)
+    {
+        swapColor(ind1, ind2);
+        globalRemove(lt_x, lt_y, rb_x + 1, rb_y + 1);
+        getTriples(imax(0, lt_x - 3), imax(0, lt_y - 3), imin(N, rb_x + 3), imin(N, rb_y + 3));
     }
 
     void loopControl(int &x, int &y, int &dir)
     {
-        int d = 0; // 0: horizontal, 1: vertical
+        int d = 0;
         int ind1 = 0, ind2 = 0;
         int kind1 = 0, kind2 = 0;
 
+        // best, find a pair of matched triples
         bool match = findMatchTriples(d, kind1, ind1, kind2, ind2);
-
         if(match)
         {
+            dir = d;
+            getPos(ind1, x, y);
+            loopControlTail(ind1, ind2);
+            return;
+        }
 
+        // if cannot find a pair of matched triples
+        // better, find a removable triples
+        match = findRemovableTriple(d, kind1, ind1);
+        if(match)
+        {
+            dir = d;
+            getPos(ind1, x, y);
+            formPos(x, y, d, ind2);
+            loopControlTail(ind1, ind2);
+            return;
         }
     }
 public:
@@ -303,7 +503,7 @@ vector<int> SquareRemover::playIt(int colors, vector<string> board, int startSee
 
     getTriples(0, 0, N, N);
 
-    generateNeighbours(0, 0, N, N);
+    //generateNeighbours(0, 0, N, N);
 
     globalRemove(0, 0, N, N);
 
@@ -355,7 +555,7 @@ int main()
 
     for(int i = 0; i < 30000; ++i)
     {
-        cout << 0 << endl;
+        cout << ret[i] << endl;
     }
 
     return 0;
