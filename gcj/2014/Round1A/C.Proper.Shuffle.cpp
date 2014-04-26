@@ -1,3 +1,8 @@
+/**
+ * This problem comes from GCJ Round 1A 2014.
+ * I finished problem A and B, didn't finish problem C.
+ * Reference: naoyat.hatenablog.jp/entry/GCJ2014R1A
+ */
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -10,60 +15,101 @@
 #include <algorithm>
 #include <queue>
 #include <map>
-typedef long long ll;
 using namespace std;
 
-int n = 0;
-int arr[1000];
-inline int iabs(int x) { return x > 0 ? x : -x; }
-inline string solve()
+int n = 1000;
+int a[1000];
+int ra[1000];
+double at[1000];
+double nx[1000];
+vector<double> prepare(int w)
 {
-    int i = 0, j = 0;
-    vector<int> pos(n, 0);
-    vector<int> minus;
-    for(i = 0; i < n; ++i)
-    {        
-        pos[arr[i]] = i;
-        minus.push_back(iabs(arr[i] - i));
-    }
-    for(i = 0; i < n; ++i)
+    int i = 0, pivot = 0;
+    double d = 0.0, u = 0.0;
+    double g = (double)(n - 1) / n;
+    memset(at, 0, sizeof(at));
+    at[w] = 1.0;
+    
+    for(pivot = 0; pivot < n; ++pivot)
     {
-        if(pos[i] == i)
+        memset(nx, 0, sizeof(nx));
+        d = at[pivot] / n;
+        for(i = 0; i < n; ++i)
         {
-            return "BAD";
+            if(i == pivot)
+            {
+                continue;
+            }
+            nx[i] = d + at[i] * g;
+        }
+        u = 0;
+        for(i = 0; i < n; ++i)
+        {
+            u += at[i];
+        }
+        nx[pivot] = u / n;
+        for(i = 0; i < n; ++i)
+        {
+            at[i] = nx[i];
         }
     }
-    for(i = 0; i < minus.size() - 1; ++i)
+    vector<double> lat(n, 0);
+    for(i = 0; i < n; ++i)
     {
-        if(minus[i] == minus[i + 1])
-        {
-            return "BAD";
-        }
+        lat[i] = log(at[i] * n);
     }
-    return "GOOD";
+    return lat;
 }
 int main()
 {
-    int t = 0;        
+    int t = 0;
     int i = 0, j = 0;
+    double lsum = 0.0;
+    vector<vector<double> > lats(1000, vector<double>(1000));
 
-    FILE* in = freopen("D:/Lab/Contests/Contests/file/C-small-attempt2.in", "r", stdin);
-    FILE* out = freopen("D:/Lab/Contests/Contests/file/C-small-attempt2.out", "w", stdout);
-
+    FILE* in = freopen("E:/Projects/lab/lab/file/C-small-practice.in", "r", stdin);
+    FILE* out = freopen("E:/Projects/lab/lab/file/C-small-practice.out", "w", stdout);    
+    
     fscanf(in, "%d", &t);
-
-    for(i = 0; i < t; i++)
+    for(i = 0; i < 1000; ++i)
+    {
+        vector<double> lat = prepare(i);
+        lats[i].assign(lat.begin(), lat.end());
+    }
+    for(i = 0; i < t; ++i)
     {
         fscanf(in, "%d", &n);
-        if(n == 1)
+        memset(a, 0, sizeof(a));
+        memset(ra, 0, sizeof(ra));
+        for(j = 0; j < n; ++j)
+        {
+            fscanf(in, "%d", &a[j]);
+            ra[a[j]] = j;
+        }
+        lsum = 0;
+        if(n == 1000)
+        {
+            for(j = 0; j < n; ++j)
+            {
+                lsum += lats[j][ra[j]];
+            }
+        }
+        else
+        {
+            for(j = 0; j < n; ++j)
+            {
+                vector<double> lat = prepare(j);
+                lsum += lat[ra[j]];
+            }
+        }
+        if(lsum > log(1.1))
+        {
+            fprintf(out, "Case #%d: %s\n", (i + 1), "BAD");
+        }
+        else
         {
             fprintf(out, "Case #%d: %s\n", (i + 1), "GOOD");
         }
-        for(j = 0; j < n; ++j)
-        {
-            fscanf(in, "%d", &arr[j]);
-        }
-        fprintf(out, "Case #%d: %s\n", (i + 1), solve().c_str());
     }
 
     fclose(out);
