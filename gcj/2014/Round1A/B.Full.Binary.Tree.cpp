@@ -12,13 +12,16 @@
 #include <map>
 typedef long long ll;
 using namespace std;
-
 const int N = 1001;
-
 int n = 0;
 bool g[N][N];
+int board[N][N];
 inline int nr(int p, int node)
 {
+	if(board[p][node] != -1)
+	{
+		return board[p][node];
+	}
     int i = 0;
     vector<int> c;
     vector<int> a;
@@ -29,13 +32,16 @@ inline int nr(int p, int node)
             c.push_back(i);
         }
     }
-    if(c.size() < 2) { return 1; }
-    for(i = 0; i < c.size(); ++i)
+    board[p][node] = 1;
+    int len = c.size();
+    if(len < 2) { return 1; }
+    for(i = 0; i < len; ++i)
     {
         a.push_back(nr(node, c[i]));
     }
     sort(a.begin(), a.end());
-    return 1 + a[a.size() -1] + a[a.size() - 2];
+    board[p][node] = 1 + a[len - 1] + a[len - 2];
+    return board[p][node];
 }
 inline int remove(int root)
 {
@@ -46,13 +52,14 @@ inline int remove(int root)
     {
         if(g[root][i]) { s.push_back(i); }
     }
-    if(s.size() < 2) { return 1; }
-    for(i = 0; i < s.size(); ++i)
+    int len = s.size();
+    if(len < 2) { return 1; }
+    for(i = 0; i < len; ++i)
     {
         c.push_back(nr(root, s[i]));
     }
     sort(c.begin(), c.end());
-    return 1 + c[c.size() - 1] + c[c.size() - 2];
+    return 1 + c[len - 1] + c[len - 2];
 }
 inline int solve()
 {
@@ -76,8 +83,8 @@ int main()
     int i = 0, j = 0;
     int s = 0, e = 0;
 
-    FILE* in = freopen("D:/Lab/Contests/Contests/file/B-large.in", "r", stdin);
-    FILE* out = freopen("D:/Lab/Contests/Contests/file/B-large.out", "w", stdout);
+    FILE* in = freopen("E:/Projects/lab/lab/file/B-large-practice.in", "r", stdin);
+    FILE* out = freopen("E:/Projects/lab/lab/file/B-large-practice.out", "w", stdout);
 
     fscanf(in, "%d", &t);
 
@@ -85,7 +92,7 @@ int main()
     {
         fscanf(in, "%d", &n);
         memset(g, 0, sizeof(g));
-
+        memset(board, 0xff, sizeof(board));
         for(j = 0; j < n - 1; ++j)
         {
             fscanf(in, "%d %d", &s, &e);
