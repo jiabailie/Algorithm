@@ -14,15 +14,17 @@
 using namespace std;
 typedef long long ll;
 
+const double pi = 3.141592653589793;
+
 class CatAndRat
 {
 public:
     double getTime(int R, int T, int Vrat, int Vcat)
     {
-        double pi = 3.14159265358979323;	
 		if(Vrat >= Vcat) { return -1.0; }
-		double ratPos = std::min(T * Vrat * 1.0, pi * R);
-		double ret = ratPos / (Vcat - Vrat);
+		double dist = pi * R;
+		if(dist - Vrat * T > 1e-9) { dist = Vrat * T; }
+        double ret = dist * 1.0 / (Vcat - Vrat);
 		return ret;
     }
     

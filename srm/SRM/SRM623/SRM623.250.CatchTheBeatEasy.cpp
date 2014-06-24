@@ -13,45 +13,43 @@
 #include <iostream>
 using namespace std;
 typedef long long ll;
+
+inline void iswap(int &a, int &b) { int c = a; a = b; b = c; }
+
 inline int iabs(int x) { return x > 0 ? x : -x; }
+
 class CatchTheBeatEasy
 {
 public:
     string ableToCatchAll(vector <int> x, vector <int> y)
     {
-		int i = 0, n = x.size();
-		int t = 0, p = 0;
-        string able = "Able to catch";
-		string uable = "Not able to catch";
-		int pos[1001];
-		for(i = 0; i < 1001; ++i) { pos[i] = 20000; }
+        int i = 0, j = 0, k = 0;
+		int n = int(x.size());
+		for(i = 0; i < n - 1; ++i)
+		{
+			k = i;
+			for(j = i + 1; j < n; ++j)
+			{
+				if(y[j] < y[k]) { k = j; }
+			}
+			if(k != i)
+			{
+				iswap(x[i], x[k]);
+				iswap(y[i], y[k]);
+			}
+		}
+		j = 0;
+		k = 0;
 		for(i = 0; i < n; ++i)
 		{
-			if(iabs(x[i]) > iabs(y[i]))
+			if(iabs(x[i] - j) > iabs(y[i] - k))
 			{
-				return uable;
+				return "Not able to catch";
 			}
-			if(pos[y[i]] == 20000)
-			{
-				pos[y[i]] = x[i];
-			}
-			else if(pos[y[i]] != 20000 && pos[y[i]] != x[i])
-			{
-				return uable;
-			}
+			j = x[i];
+			k = y[i];
 		}
-		for(i = 0; i < 1001; ++i)
-		{		
-			if(pos[i] == 20000) { continue; }
-			int real = t + iabs(p - pos[i]);
-			if(real > i)
-			{
-				return uable;
-			}
-			t = real;
-			p = pos[i];
-		}
-		return able;
+		return "Able to catch";
     }
     
 // BEGIN CUT HERE
