@@ -2,149 +2,152 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
+#define BOTTOM2UP
+#undef  BOTTOM2UP
 #define UP2BOTTOM
-#undef  UP2BOTTOM
+//#undef  UP2BOTTOM
 
 using namespace std;
 
-const int n = 7;
+const int n = 13;
 
-inline int imin(int a, int b) { return a <= b ? a : b; }
-
-void makeArray(vector<int> &aryObj)
+void makeArray(vector<int> &sortObj)
 {
 	for(int i = 0; i < n; ++i)
 	{
-		aryObj.push_back(rand() % 1937);
+		sortObj.push_back(rand() % 137);
 	}
 }
 
-void displayArray(vector<int> &aryObj)
+void displayArray(const vector<int> &sortObj)
 {
-	for(int i = 0; i < n; ++i)
+	for(int i = 0; i < sortObj.size(); ++i)
 	{
-		cout << aryObj[i] << " ";
+		cout << sortObj[i] << " ";
 	}
 	cout << endl << endl;
 }
 
-void displaySortArray(vector<int> &aryObj)
+void displaySortArray(const vector<int> &sortObj)
 {
-	vector<int> cpyObj(aryObj.begin(), aryObj.end());
+	vector<int> cpyObj(sortObj.begin(), sortObj.end());
 	sort(cpyObj.begin(), cpyObj.end());
 	displayArray(cpyObj);
 }
 
-void merge(int startPos, int midPos, int endPos, vector<int> &aryObj)
+void iMerge(int startPos, int midPos, int endPos, vector<int> &sortObj)
 {
+	if(startPos < 0 || endPos >= sortObj.size() || !(startPos < midPos && midPos <= endPos) || sortObj.size() < 2)
+	{
+		return;
+	}
 	int i = 0, j = 0;
-	vector<int> mergeRes;
+	vector<int> tmpObj;
 	for(i = startPos, j = midPos; i < midPos && j <= endPos; )
 	{
-		if(aryObj[i] < aryObj[j])
+		if(sortObj[i] < sortObj[j])
 		{
-			mergeRes.push_back(aryObj[i]);
+			tmpObj.push_back(sortObj[i]);
 			i += 1;
 		}
-		else if(aryObj[i] > aryObj[j])
+		else if(sortObj[i] > sortObj[j])
 		{
-			mergeRes.push_back(aryObj[j]);
+			tmpObj.push_back(sortObj[j]);
 			j += 1;
 		}
-		else if(aryObj[i] == aryObj[j])
+		else
 		{
-			mergeRes.push_back(aryObj[i]);
-			mergeRes.push_back(aryObj[j]);
+			tmpObj.push_back(sortObj[i]);
+			tmpObj.push_back(sortObj[j]);
 			i += 1;
 			j += 1;
 		}
 	}
 	while(i < midPos)
 	{
-		mergeRes.push_back(aryObj[i]);
+		tmpObj.push_back(sortObj[i]);
 		i += 1;
 	}
 	while(j <= endPos)
 	{
-		mergeRes.push_back(aryObj[j]);
+		tmpObj.push_back(sortObj[j]);
 		j += 1;
 	}
-	for(i = 0; i < mergeRes.size(); ++i)
+	for(i = 0; i < tmpObj.size(); ++i)
 	{
-		aryObj[i + startPos] = mergeRes[i];
+		sortObj[startPos + i] = tmpObj[i];
 	}
 }
 
 void merge_up2bottom_sub(int startPos, int endPos, vector<int> &sortObj)
 {
-	int midPos = imin(endPos, startPos + (endPos - startPos) / 2 + 1);
-
-	if(midPos == startPos && midPos == endPos) { return; }
-
-	if(midPos - startPos == 1 && endPos == midPos)
+	if(startPos == endPos)
 	{
-		merge(startPos, midPos, endPos, sortObj);
 		return;
 	}
-	
-	if(startPos <= midPos - 1)
+	if(endPos - startPos == 1)
 	{
-		merge_up2bottom_sub(startPos, midPos - 1, sortObj);
+		iMerge(startPos, endPos, endPos, sortObj);
+		return;
 	}
-	
-	if(midPos <= endPos)
-	{
-		merge_up2bottom_sub(midPos, endPos, sortObj);
-	}
-
-	merge(startPos, midPos, endPos, sortObj);
-}
-
-void merge_up2bottom(vector<int> &sortObj)
-{
-	if(sortObj.size() < 2) { return; }
-	merge_up2bottom_sub(0, sortObj.size() - 1, sortObj);
+	int midPos = startPos + (endPos - startPos + 3) / 2;
+	merge_up2bottom_sub(startPos, midPos - 1, sortObj);
+	merge_up2bottom_sub(midPos, endPos, sortObj);
+	iMerge(startPos, midPos, endPos, sortObj);
 }
 
 void merge_bottom2up(vector<int> &sortObj)
 {
 	int i = 0, j = 0;
-	int start = 0, end = 0, mid = 0;
-	for(i = 1; i <= sortObj.size(); i <<= 1)
+	int startPos = 0;
+	int midPos = 0;
+	int endPos = 0;
+	for(i = 1; i < sortObj.size(); i <<= 1)
 	{
-		for(j = 0; j < sortObj.size(); j += (i << 1))
+		for(j = 0; j < sortObj.size(); j += 2 * i)
 		{
-			start = j;
-			end = imin(sortObj.size() - 1, j + (i << 1) - 1);
-			if(start == end) { continue; }
-			mid = start + i;
-			merge(start, mid, end, sortObj);
+			startPos = j;
+			midPos = std::min<int>(sortObj.size() - 1, j + i);
+			endPos = std::min<int>(sortObj.size() - 1, j + 2 * i - 1);
+			iMerge(startPos, midPos, endPos, sortObj);
 		}
 	}
 }
 
-void mergeSort(vector<int> &sortObj)
+void merge_up2bottom(vector<int> &sortObj)
 {
-#ifdef	UP2BOTTOM
-	merge_up2bottom(sortObj);
-#else
+	merge_up2bottom_sub(0, sortObj.size() - 1, sortObj);
+}
+
+void mergesort(vector<int> &sortObj)
+{
+	if(sortObj.size() < 2)
+	{
+		return;
+	}
+#ifdef BOTTOM2UP
 	merge_bottom2up(sortObj);
+#endif
+
+#ifdef UP2BOTTOM
+	merge_up2bottom(sortObj);
 #endif
 }
 
 int main()
 {
-	vector<int> sortObj;
+	vector<int> sortArray;
 
-	makeArray(sortObj);
+	makeArray(sortArray);
 
-	displayArray(sortObj);
+	displayArray(sortArray);
 
-	displaySortArray(sortObj);
+	displaySortArray(sortArray);
 
-	mergeSort(sortObj);
+	mergesort(sortArray);
 
-	displayArray(sortObj);
-	
+	displayArray(sortArray);
+
 	return 0;
 }
