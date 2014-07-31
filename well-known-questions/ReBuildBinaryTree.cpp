@@ -129,34 +129,49 @@ void posOrderTraverse(binaryTreeNode *root)
 	cout << endl;
 }
 
-binaryTreeNode *reBuildBinaryTree(int &prePos, int inStartPos, int inEndPos, const char *preOrder, const char *inOrder)
+binaryTreeNode *ReBuildBinaryTree(int &prePos, int inStartPos, int inEndPos, const char *preOrder, const char *inOrder)
 {
-	if(strlen(preOrder) == 0 || strlen(inOrder) == 0 || strlen(preOrder) != strlen(inOrder))
+	int orderLen = strlen(preOrder);
+	if(orderLen == 0 || !(prePos >= 0 && prePos < orderLen && inStartPos >= 0 && inStartPos <= inEndPos && inEndPos < orderLen) || strlen(preOrder) != strlen(inOrder))
 	{
 		return 0;
 	}
 
-	binaryTreeNode *rootNode = new binaryTreeNode();
-	rootNode->m_cValue = preOrder[prePos];
-	rootNode->m_pLeft = 0;
-	rootNode->m_pRight = 0;
+	binaryTreeNode *pNewNode = new binaryTreeNode();
+	pNewNode->m_cValue = preOrder[prePos];
+	pNewNode->m_pLChild = 0;
+	pNewNode->m_pRChild = 0;
 
-	if(inStartPos == inEndPos) { return rootNode; }
-
-	int i = 0;
-	for(i = inStartPos; i <= inEndPos && inOrder[i] != preOrder[prePos]; ++i);
-	if(i != inStartPos)
+	if(inStartPos == inEndPos)
 	{
-		prePos += 1;
-		rootNode->m_pLeft = reBuildBinaryTree(prePos, inStartPos, i - 1, preOrder, inOrder);
-	}
-	if(i != inEndPos)
-	{
-		prePos += 1;
-		rootNode->m_pRight = reBuildBinaryTree(prePos, i + 1, inEndPos, preOrder, inOrder);
+		if(preOrder[prePos] != inOrder[inStartPos])
+		{
+			delete pNewNode;
+			throw std::exception("Invalid input.");
+		}
+		return pNewNode;
 	}
 
-	return rootNode;
+	int inPos = 0;
+	for(inPos = inStartPos; inPos <= inEndPos && inOrder[inPos] != preOrder[prePos]; ++inPos);
+	if(inPos > inEndPos)
+	{
+		delete pNewNode;
+		throw std::exception("Invalid input.");
+	}
+	
+	if(inPos != inStartPos)
+	{
+		prePos += 1;
+		pNewNode->m_pLChild = ReBuildBinaryTree(prePos, inStartPos, inPos - 1, preOrder, inOrder);
+	}
+	if(inPos != inEndPos)
+	{
+		prePos += 1;
+		pNewNode->m_pRChild = ReBuildBinaryTree(prePos, inPos + 1, inEndPos, preOrder, inOrder);
+	}
+
+	return pNewNode;
 }
 
 int main()
