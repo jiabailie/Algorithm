@@ -1,0 +1,48 @@
+#include <cstdio>
+#include <iostream>
+
+using namespace std;
+
+struct Node
+{
+	int val;
+	Node *next;
+	Node(int _val) : val(_val) {}
+};
+
+void insert(Node *&aNode, int x)
+{
+	if(!aNode)
+	{
+		aNode = new Node(x);
+		aNode->next = aNode;
+		return;
+	}
+
+	Node *pcur = aNode;
+	Node *prev = 0;
+	do
+	{
+		prev = pcur;
+		pcur = pcur->next;
+		// if prev->val <= x <= pcur->val
+		if(x <= pcur->val && x >= prev->val)
+		{
+			break;
+		}
+		// if x is the miximum or minimum value in the list
+		if((prev->val > pcur->val) && (x < pcur->val || x > prev->val))
+		{
+			break;
+		}
+	} while(pcur != aNode); // when back to starting point, stop it.
+
+	Node *newNode = new Node(x);
+	newNode->next = pcur;
+	prev->next = newNode;
+}
+
+int main()
+{
+	return 0;
+}
