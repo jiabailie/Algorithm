@@ -31,27 +31,31 @@ struct TreeNode
 	}
 };
 
-// whether the next char is splitting token
-inline bool isToken(char c, std::string &token);
+class BinaryTreeMethod
+{
+private:
+	// whether the next char is splitting token
+	bool isToken(char c, std::string &token);
 
-// whether the next word is number or not
-inline bool isNumber(std::string &str);
+	// whether the next word is number or not
+	bool isNumber(std::string &str);
 
-// transfer a string to integer
-int str2int(std::string &str);
+	// transfer a string to integer
+	int str2int(std::string &str);
 
-// read text from file
-std::vector<std::string> readFile(std::ifstream &in, std::string &token);
+	// read text from file
+	std::vector<std::string> readFile(std::ifstream &in, std::string &token);
+public:
+	// Deserialize the binary tree
+	TreeNode *DeserializeTree();
+	TreeNode *DeserializeTree(int &cur, std::vector<std::string> &vec_SerialTree);
 
-// Deserialize the binary tree
-TreeNode *DeserializeTree();
-TreeNode *DeserializeTree(int &cur, std::vector<std::string> &vec_SerialTree);
+	// Serialize the binary tree
+	void SerializeTree(TreeNode *p_Root);
+	void SerializeTree(TreeNode *p_Root, std::ostream &out);
 
-// Serialize the binary tree
-void SerializeTree(TreeNode *p_Root);
-void SerializeTree(TreeNode *p_Root, std::ostream &out);
-
-// Release the resources
-void DestroyTree(TreeNode **p_Root);
+	// Release the resources
+	void DestroyTree(TreeNode **p_Root);
+};
 
 #endif

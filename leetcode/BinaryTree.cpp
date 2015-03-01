@@ -1,7 +1,7 @@
 #include "BinaryTree.h"
 
 // whether the next char is splitting token
-inline bool isToken(char c, std::string &token)
+bool BinaryTreeMethod::isToken(char c, std::string &token)
 {
 	for(std::string::iterator it = token.begin(); it != token.end(); ++it)
 	{
@@ -14,7 +14,7 @@ inline bool isToken(char c, std::string &token)
 }
 
 // whether the next word is number or not
-inline bool isNumber(std::string &str)
+bool BinaryTreeMethod::isNumber(std::string &str)
 {
 	if(str.size() == 0)
 	{
@@ -31,7 +31,7 @@ inline bool isNumber(std::string &str)
 }
 
 // transfer a string to integer
-int str2int(std::string &str)
+int BinaryTreeMethod::str2int(std::string &str)
 {
 	int ret = 0;
 	for(size_t i = 0; i < str.size(); ++i)
@@ -42,7 +42,7 @@ int str2int(std::string &str)
 }
 
 // read text from file
-std::vector<std::string> readFile(std::ifstream &in, std::string &token)
+std::vector<std::string> BinaryTreeMethod::readFile(std::ifstream &in, std::string &token)
 {
 	if(!in.is_open())
 	{
@@ -75,7 +75,7 @@ std::vector<std::string> readFile(std::ifstream &in, std::string &token)
 }
 
 // Deserialize the binary tree
-TreeNode *DeserializeTree()
+TreeNode* BinaryTreeMethod::DeserializeTree()
 {
 	std::string token(" ");
 
@@ -86,7 +86,7 @@ TreeNode *DeserializeTree()
 	int cur = 0;
 	return DeserializeTree(cur, vec_SerialTree);
 }
-TreeNode *DeserializeTree(int &cur, std::vector<std::string> &vec_SerialTree)
+TreeNode* BinaryTreeMethod::DeserializeTree(int &cur, std::vector<std::string> &vec_SerialTree)
 {
 	if(cur < 0 || cur >= int(vec_SerialTree.size()) || vec_SerialTree.size() == 0 || !isNumber(vec_SerialTree[cur]))
 	{
@@ -102,13 +102,13 @@ TreeNode *DeserializeTree(int &cur, std::vector<std::string> &vec_SerialTree)
 }
 
 // Serialize the binary tree
-void SerializeTree(TreeNode *p_Root)
+void BinaryTreeMethod::SerializeTree(TreeNode *p_Root)
 {
 	std::ofstream out(str_OutFilePath);
 
 	SerializeTree(p_Root, out);
 }
-void SerializeTree(TreeNode *p_Root, std::ostream &out)
+void BinaryTreeMethod::SerializeTree(TreeNode *p_Root, std::ostream &out)
 {
 	if(!p_Root)
 	{
@@ -123,7 +123,7 @@ void SerializeTree(TreeNode *p_Root, std::ostream &out)
 }
 
 // Release the resources
-void DestroyTree(TreeNode **p_Root)
+void BinaryTreeMethod::DestroyTree(TreeNode **p_Root)
 {
 	if(!p_Root || !(*p_Root))
 	{

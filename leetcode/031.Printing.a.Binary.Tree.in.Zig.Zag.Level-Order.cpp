@@ -49,11 +49,12 @@ void PrintingZigZagLevelOrder(TreeNode *p_Root)
 
 int main()
 {
-	TreeNode *p_Root = DeserializeTree();
+	BinaryTreeMethod btObj;
+	TreeNode *p_Root = btObj.DeserializeTree();
 
 	PrintingZigZagLevelOrder(p_Root);
 
-	DestroyTree(&p_Root);
+	btObj.DestroyTree(&p_Root);
 
 	return 0;
 }
