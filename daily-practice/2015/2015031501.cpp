@@ -94,7 +94,7 @@ void initRMQ3(vector<int> &queue)
 }
 int findRMQ3(int s, int e, vector<int> &queue)
 {
-	int k = log(double(e - s + 1));
+	int k = int(log(double(e - s + 1)) / log(2.0));
 	//int r = e - s + 1;
 	//while ((1 << k) <= r) { k += 1; }
 	if (queue[dp2[s][k]] <= queue[dp2[e - (1 << k) + 1][k]])
