@@ -6,18 +6,18 @@ using namespace std;
 
 class TextBlock {  
     public: 
-		TextBlock(string s)
-		{
-			text = string(s.begin(), s.end());
-		}
+	TextBlock(string s)
+	{
+		text = string(s.begin(), s.end());
+	}
         const char& operator[] (std::size_t position) const  
         {
-			return text[position];
-		}  
+		return text[position];
+	}  
         char& operator[] (std::size_t position)  
         {
-			return text[position];
-		}  
+		return text[position];
+	}  
     private:  
         string text;  
 };
@@ -30,5 +30,5 @@ int main()
     const TextBlock ctb("World");  
     std::cout << ctb[0];  
 
-	return 0;
+    return 0;
 }
